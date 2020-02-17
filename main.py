@@ -14,7 +14,8 @@ def main():
     args = parse_args()
 
     try:
-        Crawler.crawl(args.website_link)
+        dead_links = Crawler.crawl(args.website_link)
+        print(f'dead links are: {" ".join(dead_links)}')
     except Exception as e:
         print(f"Error occured while crawling {args.website_link}. {str(e)}")
 
