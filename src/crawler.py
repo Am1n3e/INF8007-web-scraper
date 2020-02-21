@@ -54,6 +54,8 @@ class Crawler:
         logger.debug("Crawling: %s. Found %d link(s)", source_link + route, len(links))
         for link in links:
             full_link = source_link + link if link.startswith("/") else link
+            if full_link.startswith("www"):
+                full_link = "http://" + full_link
             if full_link not in self.__visited_links:
                 self.__visited_links.append(full_link)
 
