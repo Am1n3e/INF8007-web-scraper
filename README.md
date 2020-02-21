@@ -42,7 +42,7 @@ Usage:
 ```bash
 # Current directory is assumed to be root folder of the project
 
-black . 
+black .
 ```
 
 ### Linting
@@ -54,5 +54,5 @@ Usage:
 ```bash
 # Current directory is assumed to be root folder of the project
 
-pylint . 
+pylint .
 ```
