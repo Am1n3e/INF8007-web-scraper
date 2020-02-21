@@ -73,8 +73,13 @@ class Crawler:
         Return:
             True if the link is dead else False
         """
-        response = requests.get(link)
-        return response.status_code != 200  # Alive pages return 200 as http response status code
+        try:
+            response = requests.get(link)
+            return response.status_code != 200  # Alive pages return 200 as http response status code
+        except Exception as e:
+            # This is to avoid stoping the app if one link is bad
+            logger.error("Failed to check page status for %s. Bad regex or bad link", link)
+            logger.exception(e)
 
     @staticmethod
     def _create_full_link(source_link, link):
