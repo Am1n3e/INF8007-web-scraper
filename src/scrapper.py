@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class Scraper:
     @staticmethod
-    def get_web_page_links(web_page_link: str):
+    def get_web_page_links(web_page_link: str) -> list:
         """Extract the links for a web page
 
         Args:
@@ -36,7 +36,7 @@ class Scraper:
         return links
 
     @staticmethod
-    def _get_page_body(web_page_link):
+    def _get_page_body(web_page_link: str) -> str:
         """Get the web page body
 
         Args:

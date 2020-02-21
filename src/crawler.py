@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class Crawler:
-    def __init__(self, website_url):
+    def __init__(self, website_url: str) -> None:
         """Init the crawler object.
 
         Args:
@@ -20,7 +20,7 @@ class Crawler:
         self.__website_url = website_url
 
     @property
-    def dead_links(self):
+    def dead_links(self) -> list:
         """Get the dead links.
 
         Returns:
@@ -29,12 +29,12 @@ class Crawler:
         # Using a property to make sure that the dead links can't be modified (unless you mangle the name)
         return self.__dead_links
 
-    def clear(self):
+    def clear(self) -> None:
         """Clears the visited and dead links lists"""
         self.__visited_links = []
         self.__dead_links = []
 
-    def crawl(self):
+    def crawl(self) -> None:
         """Crawl the website url given to the init"""
         self.clear()
 
@@ -48,7 +48,7 @@ class Crawler:
 
         logger.info("Visited %d page(s)", len(self.__visited_links))
 
-    def _crawl(self, source_link, route):
+    def _crawl(self, source_link: str, route: str):
         """Crawl the page (source_link + route) given to the init"""
         full_link = self._create_full_link(source_link, route)
         links = Scraper.get_web_page_links(full_link)
@@ -66,7 +66,7 @@ class Crawler:
                 elif self._is_internal_link(link, source_link):
                     self._crawl(source_link, link)
 
-    def _is_visited(self, link):
+    def _is_visited(self, link: str) -> bool:
         """Check if the link is already visited
 
         Args:
@@ -77,7 +77,7 @@ class Crawler:
         """
         return link in self.__visited_links
 
-    def _mark_visited(self, link):
+    def _mark_visited(self, link: str) -> None:
         """Mark the link as visited
 
         Args:
@@ -86,7 +86,7 @@ class Crawler:
         """
         self.__visited_links.append(link)
 
-    def _mark_dead(self, link):
+    def _mark_dead(self, link: str) -> None:
         """Mark the link as dead
 
         Args:
@@ -96,7 +96,7 @@ class Crawler:
         self.__dead_links.append(link)
 
     @staticmethod
-    def _is_internal_link(link, source_link):
+    def _is_internal_link(link: str, source_link: str) -> bool:
         """Check if link is internal
 
         Args:
@@ -112,7 +112,7 @@ class Crawler:
         return False
 
     @staticmethod
-    def _is_dead_link(link):
+    def _is_dead_link(link: str) -> bool:
         """Check if link is dead using the http response code
 
         Args:
@@ -131,7 +131,7 @@ class Crawler:
             return True
 
     @staticmethod
-    def _create_full_link(source_link, link):
+    def _create_full_link(source_link: str, link: str) -> str:
         if link == "/":
             # root
             full_link = source_link
