@@ -1,6 +1,10 @@
+import logging
 import argparse
 
 from src.crawler import Crawler
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 
 
 def _parse_args():
@@ -13,6 +17,7 @@ def _parse_args():
     """
     arg_parser = argparse.ArgumentParser(description="Web crawler application")
     arg_parser.add_argument("website_url", help="Url of the website to crawl")
+    arg_parser.add_argument("--verbose", action="store_true", help="Show debug messages")
 
     return arg_parser.parse_args()
 
@@ -24,14 +29,23 @@ def _print_dead_links(dead_links):
         dead_links: The dead links list
     """
     if dead_links:
-        print(f'dead links: {" ".join(dead_links)}')
+        logger.info("dead links: %s", " ".join(dead_links))
     else:
-        print("No dead links found")
+        logger.info("No dead links found")
+
+
+def _setup_logger(verbose):
+    """Setup the root logger.
+    Args:
+        verbose: Flag to enable/disable debug message
+    """
+    logging.getLogger().setLevel(logging.DEBUG if verbose else logging.INFO)
 
 
 def main():
     args = _parse_args()
 
+    _setup_logger(args.verbose)
     try:
         crawler = Crawler(args.website_url)
         crawler.crawl()
@@ -39,7 +53,8 @@ def main():
         _print_dead_links(crawler.dead_links)
     except Exception as exception:
         # Using Broad excetion to catch all errors to give a proper error message
-        print(f"Error occured while crawling {args.website_link}. {str(exception)}")
+        logger.error("Error occured while crawling  %s", args.website_url)
+        logger.exception(exception)
 
 
 if __name__ == "__main__":

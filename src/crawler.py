@@ -1,6 +1,9 @@
+import logging
 import requests
 
 from src.scrapper import Scraper
+
+logger = logging.getLogger(__name__)
 
 
 class Crawler:
@@ -45,6 +48,8 @@ class Crawler:
 
     def _crawl(self, source_link, route):
         """Crawl the page (source_link + route) given to the init"""
+        logger.debug("Crawling: %s", source_link + route)
+
         links = Scraper.get_web_page_links(source_link + route)
         for link in links:
             full_link = source_link + link if link.startswith("/") else link
