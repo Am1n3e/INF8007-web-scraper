@@ -30,6 +30,10 @@ pip install -r requirements.txt  # or requirement-dev.txt to install dev librari
 python main.py https://webscraper.io
 ```
 
+### Exit code:
+0: Success (but some pages might not been crawled (bad links, rate limiters)
+1: Fatal error (exceptions, ...)
+
 
 ## Contribution
 

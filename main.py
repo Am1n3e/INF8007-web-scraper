@@ -55,6 +55,9 @@ def main():
         # Using Broad excetion to catch all errors to give a proper error message
         logger.error("Error occured while crawling  %s", args.website_url)
         logger.exception(exception)
+        exit(1)  # Useful when scripting the app
+
+    exit(0)
 
 
 if __name__ == "__main__":
