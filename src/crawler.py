@@ -75,6 +75,8 @@ class Crawler:
         Returns:
             True if the link is visited
         """
+        # For advanced check, we can hash the body of page to exclude adds and un-used query parameters
+        # But we felt that this would make a bigger project (to implement the right hashing function)
         return link in self.__visited_links
 
     def _mark_visited(self, link: str) -> None:
