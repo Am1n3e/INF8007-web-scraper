@@ -26,6 +26,22 @@ pip install -r requirements.txt  # or requirement-dev.txt to install dev librari
 
 ## Usage
 
+```
+usage: main.py [-h] [--verbose] [--trottle TROTTLE] website_url
+
+Web crawler application
+
+positional arguments:
+  website_url        Url of the website to crawl
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --verbose          Show debug messages
+  --trottle TROTTLE  Sleep time in secs between each 10 pages (to void rate
+                     limiters)
+```
+
+
 ```sh
 python main.py https://webscraper.io
 ```
