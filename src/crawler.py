@@ -50,9 +50,8 @@ class Crawler:
 
     def _crawl(self, source_link, route):
         """Crawl the page (source_link + route) given to the init"""
-        logger.debug("Crawling: %s", source_link + route)
-
         links = Scraper.get_web_page_links(source_link + route)
+        logger.debug("Crawling: %s. Found %d link(s)", source_link + route, len(links))
         for link in links:
             full_link = source_link + link if link.startswith("/") else link
             if full_link not in self.__visited_links:
