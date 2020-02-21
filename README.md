@@ -30,11 +30,21 @@ pip install -r requirements.txt  # or requirement-dev.txt to install dev librari
 python main.py https://webscraper.io
 ```
 
+### Verbose mode
 To start the app in verbose mode, the `--verbose` flag.
 
 ```sh
 python main.py https://webscraper.io --verbose
 ```
+
+### Trottling
+Some websites use rate limiter which blocks the scrapper, to avoid this use the trottle args to sleep after each 10
+pages
+
+```sh
+python main.py https://webscraper.io --verbose --trottle 10
+```
+
 
 ### Exit code:
 0: Success (but some pages might not been crawled (bad links, rate limiters)

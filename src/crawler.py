@@ -1,5 +1,6 @@
 import logging
 import requests
+import time
 
 from src.scrapper import Scraper
 
@@ -7,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class Crawler:
-    def __init__(self, website_url: str) -> None:
+    def __init__(self, website_url: str, trottle: int) -> None:
         """Init the crawler object.
 
         Args:
@@ -18,6 +19,9 @@ class Crawler:
         self.__visited_links = []
         self.__dead_links = []
         self.__website_url = website_url
+        self.__crawled_pages = 0
+
+        self.trottle = trottle  # for this var we don't care if the user change it
 
     @property
     def dead_links(self) -> list:
@@ -33,6 +37,7 @@ class Crawler:
         """Clears the visited and dead links lists"""
         self.__visited_links = []
         self.__dead_links = []
+        self.__crawled_pages = 0
 
     def crawl(self) -> None:
         """Crawl the website url given to the init"""
@@ -50,6 +55,8 @@ class Crawler:
 
     def _crawl(self, source_link: str, route: str):
         """Crawl the page (source_link + route) given to the init"""
+        self.check_trottle()
+
         full_link = self._create_full_link(source_link, route)
         links = Scraper.get_web_page_links(full_link)
         logger.debug("Crawling: %s. Found %d link(s)", full_link, len(links))
@@ -65,6 +72,14 @@ class Crawler:
                     self._mark_dead(full_link)
                 elif self._is_internal_link(link, source_link):
                     self._crawl(source_link, link)
+
+    def check_trottle(self) -> None:
+        """Check if a trottle is needed and sleep is yes"""
+        self.__crawled_pages += 1
+
+        if self.trottle > 0 and self.__crawled_pages % 10 == 0:
+            logger.debug("Sleeping for %d", self.trottle)
+            time.sleep(self.trottle)
 
     def _is_visited(self, link: str) -> bool:
         """Check if the link is already visited

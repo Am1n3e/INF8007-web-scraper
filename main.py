@@ -18,6 +18,9 @@ def _parse_args():
     arg_parser = argparse.ArgumentParser(description="Web crawler application")
     arg_parser.add_argument("website_url", help="Url of the website to crawl")
     arg_parser.add_argument("--verbose", action="store_true", help="Show debug messages")
+    arg_parser.add_argument(
+        "--trottle", type=int, help="Sleep time in secs between each 10 pages (to void rate limiters)", default=0
+    )
 
     return arg_parser.parse_args()
 
@@ -47,7 +50,7 @@ def main():
 
     _setup_logger(args.verbose)
     try:
-        crawler = Crawler(args.website_url)
+        crawler = Crawler(args.website_url, args.trottle)
         crawler.crawl()
 
         _print_dead_links(crawler.dead_links)
