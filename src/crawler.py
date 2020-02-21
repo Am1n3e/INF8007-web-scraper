@@ -37,7 +37,7 @@ class Crawler:
         """Clears the visited and dead links lists"""
         self.__visited_links = []
         self.__dead_links = []
-        self.__crawled_pages = 0
+        self.__crawled_pages_cnt = 0
 
     def crawl(self) -> None:
         """Crawl the website url given to the init"""
@@ -75,9 +75,9 @@ class Crawler:
 
     def check_trottle(self) -> None:
         """Check if a trottle is needed and sleep is yes"""
-        self.__crawled_pages += 1
+        self.__crawled_pages_cnt += 1
 
-        if self.trottle > 0 and self.__crawled_pages % 10 == 0:
+        if self.trottle > 0 and self.__crawled_pages_cnt % 10 == 0:
             logger.debug("Sleeping for %d", self.trottle)
             time.sleep(self.trottle)
 
