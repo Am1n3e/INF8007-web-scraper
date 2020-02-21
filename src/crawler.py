@@ -46,6 +46,8 @@ class Crawler:
 
         self._crawl(self.__website_url, "/")  # the "/" is for the root route (the website page it self)
 
+        logger.info("Visited %d page(s)", len(self.__visited_links))
+
     def _crawl(self, source_link, route):
         """Crawl the page (source_link + route) given to the init"""
         logger.debug("Crawling: %s", source_link + route)
