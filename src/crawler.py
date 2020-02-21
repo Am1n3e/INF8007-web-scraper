@@ -128,6 +128,7 @@ class Crawler:
             # This is to avoid stoping the app if one link is bad
             logger.error("Failed to check page status for %s. Bad regex or bad link", link)
             logger.exception(e)
+            return True
 
     @staticmethod
     def _create_full_link(source_link, link):
