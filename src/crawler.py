@@ -50,12 +50,11 @@ class Crawler:
 
     def _crawl(self, source_link, route):
         """Crawl the page (source_link + route) given to the init"""
-        links = Scraper.get_web_page_links(source_link + route)
-        logger.debug("Crawling: %s. Found %d link(s)", source_link + route, len(links))
+        full_link = self._create_full_link(source_link, route)
+        links = Scraper.get_web_page_links(full_link)
+        logger.debug("Crawling: %s. Found %d link(s)", full_link, len(links))
         for link in links:
-            full_link = source_link + link if link.startswith("/") else link
-            if full_link.startswith("www"):
-                full_link = "http://" + full_link
+            full_link = self._create_full_link(source_link, link)
             if full_link not in self.__visited_links:
                 self.__visited_links.append(full_link)
 
@@ -76,3 +75,26 @@ class Crawler:
         """
         response = requests.get(link)
         return response.status_code != 200  # Alive pages return 200 as http response status code
+
+    @staticmethod
+    def _create_full_link(source_link, link):
+        if link == "/":
+            # root
+            full_link = source_link
+        elif link.startswith("/"):
+            # internal links
+            full_link = source_link + link
+        else:
+            # external links
+            full_link = link
+
+        if full_link.startswith("www"):
+            # This is needed fo the python requests library. all links should be either http or https
+            # We chose http, so the upstream will set to https in case it exists
+            full_link = "http://" + full_link
+
+        if full_link.endswith("/"):
+            # Remove the trailing /,  so that http://hello.com/ and http://hello.com are the same
+            full_link = full_link[:-1]
+
+        return full_link
