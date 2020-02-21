@@ -47,7 +47,7 @@ class Crawler:
             # If the web site is not accessible in the first place there is no need to continue
             raise ValueError(f"The source web page link ({self.__website_url}) is not accessible")
 
-        self.__visited_links.append(self.__website_url)
+        self._mark_visited(self.__website_url)
 
         self._crawl(self.__website_url, "/")  # the "/" is for the root route (the website page it self)
 
@@ -55,7 +55,7 @@ class Crawler:
 
     def _crawl(self, source_link: str, route: str):
         """Crawl the page (source_link + route) given to the init"""
-        self.check_trottle()
+        self._check_trottle()
 
         full_link = self._create_full_link(source_link, route)
         links = Scraper.get_web_page_links(full_link)
@@ -73,7 +73,7 @@ class Crawler:
                 elif self._is_internal_link(link, source_link):
                     self._crawl(source_link, link)
 
-    def check_trottle(self) -> None:
+    def _check_trottle(self) -> None:
         """Check if a trottle is needed and sleep is yes"""
         self.__crawled_pages_cnt += 1
 
