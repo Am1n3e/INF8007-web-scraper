@@ -53,22 +53,70 @@ class Crawler:
         full_link = self._create_full_link(source_link, route)
         links = Scraper.get_web_page_links(full_link)
         logger.debug("Crawling: %s. Found %d link(s)", full_link, len(links))
+
         for link in links:
             full_link = self._create_full_link(source_link, link)
-            if full_link not in self.__visited_links:
-                self.__visited_links.append(full_link)
 
-                if Crawler._is_dead_link(full_link):
-                    self.__dead_links.append(full_link)
-                elif link.startswith("/") or link.startswith(source_link):  # Internal links
+            if not self._is_visited(full_link):
+
+                self._mark_visited(full_link)
+
+                if self._is_dead_link(full_link):
+                    self._mark_dead(full_link)
+                elif self._is_internal_link(link, source_link):
                     self._crawl(source_link, link)
+
+    def _is_visited(self, link):
+        """Check if the link is already visited
+
+        Args:
+            link: The link to check
+
+        Returns:
+            True if the link is visited
+        """
+        return link in self.__visited_links
+
+    def _mark_visited(self, link):
+        """Mark the link as visited
+
+        Args:
+            link: The link to mark
+
+        """
+        self.__visited_links.append(link)
+
+    def _mark_dead(self, link):
+        """Mark the link as dead
+
+        Args:
+            link: The link to mark
+
+        """
+        self.__dead_links.append(link)
+
+    @staticmethod
+    def _is_internal_link(link, source_link):
+        """Check if link is internal
+
+        Args:
+            link: The link
+            source_link: The source link
+
+        Return:
+            True if the link is internal else False
+        """
+        if link.startswith("/") or link.startswith(source_link):
+            return True
+
+        return False
 
     @staticmethod
     def _is_dead_link(link):
         """Check if link is dead using the http response code
 
         Args:
-            response: The link
+            link: The link
 
         Return:
             True if the link is dead else False
