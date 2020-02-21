@@ -61,6 +61,12 @@ pages
 python main.py https://webscraper.io --verbose --trottle 10
 ```
 
+### Sample output
+```
+INFO:src.crawler:Visited 495 page(s)
+INFO:__main__:dead links: https://www.youtube.com/yt/about/en https://www.wbs-law.de/eng/practice-areas/internet-law/it-law https://website.com https://api.webscraper.io/api/v1/sitemap?api_token=&lt http://webscraper.io/&quot https://api.webscraper.io/api/v1/sitemap/&lt https://api.webscraper.io/api/v1/sitemaps?api_token=&lt https://api.webscraper.io/api/v1/scraping-job?api_token=&lt https://api.webscraper.io/api/v1/scraping-job/&lt https://api.webscraper.io/api/v1/scraping-jobs?api_token=&lt https://api.webscraper.io/api/v1/account?api_token=&lt https://example.com/robots.txt https://example.com/sitemap.xml http://example.com/page http://example.com/page/1 http://example.com/page/2 http://example.com/page/3 http://example.com/page/001 http://example.com/page/002 http://example.com/page/003 http://example.com/page/0 http://example.com/page/10 http://example.com/page/20
+```
+
 
 ### Exit code:
 0: Success (but some pages might not been crawled (bad links, rate limiters)
