@@ -32,7 +32,7 @@ def _print_dead_links(dead_links):
         dead_links: The dead links list
     """
     if dead_links:
-        logger.info("dead links: %s", " ".join(dead_links))
+        logger.info("dead links:\n\t%s", "\n\t".join(dead_links))
     else:
         logger.info("No dead links found")
 
