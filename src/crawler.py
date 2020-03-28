@@ -19,7 +19,7 @@ class Crawler:
         self.__visited_links = []
         self.__dead_links = []
         self.__website_url = website_url
-        self.__crawled_pages = 0
+        self.__crawled_pages_cnt = 0
 
         self.trottle = trottle  # for this var we don't care if the user change it
 
