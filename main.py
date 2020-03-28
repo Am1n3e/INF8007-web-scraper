@@ -55,7 +55,7 @@ def main():
 
         _print_dead_links(crawler.dead_links)
     except Exception as exception:
-        # Using Broad excetion to catch all errors to give a proper error message
+        # Using Broad exception to catch all errors to give a proper error message
         logger.error("Error occured while crawling  %s", args.website_url)
         logger.exception(exception)
         exit(1)  # Useful when scripting the app
