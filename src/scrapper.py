@@ -2,6 +2,8 @@ import re
 import logging
 import requests
 
+from src.utils import is_valid_status_code
+
 logger = logging.getLogger(__name__)
 
 
@@ -55,7 +57,7 @@ class Scraper:
             logger.exception(e)
             return ""
 
-        if response.status_code != 200:
+        if not is_valid_status_code(response.status_code):
             # This function expext that link is not dead, so this is just to make sure upstream code is going the check
             logger.error("Unable to scrape {web_page_link}. Got status code = %s", response.status_code)
 

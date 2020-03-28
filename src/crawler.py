@@ -3,6 +3,7 @@ import requests
 import time
 
 from src.scrapper import Scraper
+from src.utils import is_valid_status_code
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +141,7 @@ class Crawler:
         """
         try:
             response = requests.get(link)
-            return response.status_code != 200  # Alive pages return 200 as http response status code
+            return not is_valid_status_code(response.status_code)
         except Exception as e:
             # This is to avoid stoping the app if one link is bad
             logger.error("Failed to check page status for %s. Bad regex or bad link", link)
