@@ -9,7 +9,9 @@ logger = logging.getLogger(__name__)
 
 
 class Crawler:
-    def __init__(self, website_url: str, trottle: int, show_exception_tb: bool = False) -> None:
+    def __init__(
+        self, website_url: str, trottle: int, show_exception_tb: bool = False, disable_crawling: bool = False
+    ) -> None:
         """Init the crawler object.
 
         Args:
@@ -25,6 +27,7 @@ class Crawler:
 
         self.trottle = trottle  # for this var we don't care if the user change it
         self.show_exception_tb = show_exception_tb
+        self.disable_crawling = disable_crawling
 
     @property
     def dead_links(self) -> list:
@@ -75,7 +78,7 @@ class Crawler:
                 is_dead_link, status_code = self._is_dead_link(full_link)
                 if is_dead_link:
                     self._mark_dead(full_link, status_code)
-                elif self._is_internal_link(link, source_link):
+                elif not self.disable_crawling and self._is_internal_link(link, source_link):
                     self._crawl(source_link, link)
 
     def _check_trottle(self) -> None:

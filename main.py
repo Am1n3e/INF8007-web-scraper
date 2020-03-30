@@ -24,6 +24,7 @@ def _parse_args():
         "--trottle", type=int, help="Sleep time in secs between each 10 pages (to void rate limiters)", default=0
     )
     arg_parser.add_argument("--show_exception_tb", action="store_true", help="Show exception trace back")
+    arg_parser.add_argument("--disable_crawling", action="store_true", help="Disable crawling (go depth of 1)")
 
     return arg_parser.parse_args()
 
@@ -54,7 +55,12 @@ def main():
 
     _setup_logger(args.verbose)
     try:
-        crawler = Crawler(args.website_url, args.trottle, show_exception_tb=args.show_exception_tb)
+        crawler = Crawler(
+            args.website_url,
+            args.trottle,
+            show_exception_tb=args.show_exception_tb,
+            disable_crawling=args.disable_crawling,
+        )
         crawler.crawl()
 
         _print_dead_links(crawler.dead_links)

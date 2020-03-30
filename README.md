@@ -28,6 +28,7 @@ pip install -r requirements.txt  # or requirement-dev.txt to install dev librari
 
 ```
 usage: main.py [-h] [--verbose] [--trottle TROTTLE] [--show_exception_tb]
+               [--disable_crawling]
                website_url
 
 Web crawler application
@@ -41,6 +42,7 @@ optional arguments:
   --trottle TROTTLE    Sleep time in secs between each 10 pages (to void rate
                        limiters)
   --show_exception_tb  Show exception trace back
+  --disable_crawling   Disable crawling (go depth of 1)
 ```
 
 
@@ -61,6 +63,13 @@ pages
 
 ```sh
 python main.py https://webscraper.io --verbose --trottle 10
+```
+
+### Disable crawling
+To disable crawling (go only to depth of 1), use the `--disable_crawling` flag.
+
+```sh
+python main.py https://webscraper.io --disable_crawling
 ```
 
 ### Sample output
