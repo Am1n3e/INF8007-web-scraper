@@ -66,18 +66,18 @@ python main.py https://webscraper.io --verbose --trottle 10
 INFO:src.crawler:Visited 501 page(s)
 INFO:__main__:dead links:
 Link                                                           Reason
--------------------------------------------------------------  --------------------
-https://www.youtube.com/yt/about/en                            Bad status code: 404
-https://www.wbs-law.de/eng/practice-areas/internet-law/it-law  Bad status code: 410
+-------------------------------------------------------------  -----------------------------------------
+https://www.youtube.com/yt/about/en                            Bad status code: 404 'Not Found'
+https://www.wbs-law.de/eng/practice-areas/internet-law/it-law  Bad status code: 410 'Gone'
 https://website.com                                            Connection error
-https://api.webscraper.io/api/v1/sitemap?api_token=&lt         Bad status code: 405
-http://webscraper.io/&quot                                     Bad status code: 404
-https://api.webscraper.io/api/v1/sitemap/&lt                   Bad status code: 401
-https://api.webscraper.io/api/v1/sitemaps?api_token=&lt        Bad status code: 401
-https://api.webscraper.io/api/v1/scraping-job?api_token=&lt    Bad status code: 405
-https://api.webscraper.io/api/v1/scraping-job/&lt              Bad status code: 401
-https://api.webscraper.io/api/v1/scraping-jobs?api_token=&lt   Bad status code: 401
-https://api.webscraper.io/api/v1/account?api_token=&lt         Bad status code: 401
+https://api.webscraper.io/api/v1/sitemap?api_token=&lt         Bad status code: 405 'Method Not Allowed'
+http://webscraper.io/&quot                                     Bad status code: 404 'Not Found'
+https://api.webscraper.io/api/v1/sitemap/&lt                   Bad status code: 401 'Unauthorized'
+https://api.webscraper.io/api/v1/sitemaps?api_token=&lt        Bad status code: 401 'Unauthorized'
+https://api.webscraper.io/api/v1/scraping-job?api_token=&lt    Bad status code: 405 'Method Not Allowed'
+https://api.webscraper.io/api/v1/scraping-job/&lt              Bad status code: 401 'Unauthorized'
+https://api.webscraper.io/api/v1/scraping-jobs?api_token=&lt   Bad status code: 401 'Unauthorized'
+https://api.webscraper.io/api/v1/account?api_token=&lt         Bad status code: 401 'Unauthorized'
 https://example.com/robots.txt                                 Connection error
 https://example.com/sitemap.xml                                Connection error
 http://example.com/page                                        Connection error

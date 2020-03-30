@@ -4,7 +4,6 @@ import time
 from typing import Tuple
 
 from src.scrapper import Scraper
-from src.utils import is_valid_status_code
 
 logger = logging.getLogger(__name__)
 
@@ -142,12 +141,17 @@ class Crawler:
         Return:
             (True, Reason) if the link is dead else (False, None)
         """
+
         try:
             response = requests.get(link)
-            if not is_valid_status_code(response.status_code):
-                return True, f"Bad status code: {response.status_code}"
-            else:
-                return False, None
+
+            # Using "raise_for_status", the requests library will check if the status code
+            # is within the valid range
+            response.raise_for_status()
+
+            return False, None
+        except requests.exceptions.HTTPError as e:
+            return True, f"Bad status code: {e.response.status_code} '{e.response.reason}'"
         except Exception as e:
             # This is to avoid stoping the app if one link is bad
             logger.debug("Error occured while checking %s. %s", link, str(e))

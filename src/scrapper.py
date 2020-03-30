@@ -2,8 +2,6 @@ import re
 import logging
 import requests
 
-from src.utils import is_valid_status_code
-
 logger = logging.getLogger(__name__)
 
 
@@ -51,15 +49,13 @@ class Scraper:
         """
         try:
             response = requests.get(web_page_link)
-        except Exception as e:
-            # This is to avoid stoping the app if one link is bad
-            logger.error("Failed to check page content for %s. Bad regex or bad link", web_page_link)
-            logger.exception(e)
-            return ""
+            response.raise_for_status()
 
-        if not is_valid_status_code(response.status_code):
-            # This function expext that link is not dead, so this is just to make sure upstream code is going the check
-            logger.error("Unable to scrape {web_page_link}. Got status code = %s", response.status_code)
+        except Exception as e:
+            # Raising an Exception, the scraper is expected to be called on an existing page
+            logger.error("Failed to get page content for %s", web_page_link)
+            logger.error(e)
+            raise
 
         web_page_content = response.content.decode()
 
