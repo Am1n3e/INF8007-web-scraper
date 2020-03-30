@@ -112,12 +112,7 @@ http://example.com/page/20                                     Connection error
 ```
 
 About **Connection error**</br>
-A connection error can be that the connection was reset/refused by peer or timeout. To know the exact error, use the `--verbose` flag.
-The error message will look like the following:
-```
-DEBUG:src.crawler:Error occured while checking http://example.com/page/20. HTTPConnectionPool(host='example.com', port=80): Max retries exceeded with url: /page/20 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110eb7a10>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
-```
-
+A connection error can be that the connection was reset/refused by peer or timeout. To know the exact error, use the `--show_exception_tb` flag.
 
 ### Exit code:
 0: Success (but some pages might not been crawled (bad links, rate limiters)
