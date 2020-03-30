@@ -5,7 +5,7 @@ from tabulate import tabulate
 
 from src.crawler import Crawler
 
-logging.basicConfig()
+logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
