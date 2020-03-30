@@ -27,18 +27,20 @@ pip install -r requirements.txt  # or requirement-dev.txt to install dev librari
 ## Usage
 
 ```
-usage: main.py [-h] [--verbose] [--trottle TROTTLE] website_url
+usage: main.py [-h] [--verbose] [--trottle TROTTLE] [--show_exception_tb]
+               website_url
 
 Web crawler application
 
 positional arguments:
-  website_url        Url of the website to crawl
+  website_url          Url of the website to crawl
 
 optional arguments:
-  -h, --help         show this help message and exit
-  --verbose          Show debug messages
-  --trottle TROTTLE  Sleep time in secs between each 10 pages (to void rate
-                     limiters)
+  -h, --help           show this help message and exit
+  --verbose            Show debug messages
+  --trottle TROTTLE    Sleep time in secs between each 10 pages (to void rate
+                       limiters)
+  --show_exception_tb  Show exception trace back
 ```
 
 

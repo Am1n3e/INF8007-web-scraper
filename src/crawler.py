@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class Crawler:
-    def __init__(self, website_url: str, trottle: int) -> None:
+    def __init__(self, website_url: str, trottle: int, show_exception_tb: bool = False) -> None:
         """Init the crawler object.
 
         Args:
@@ -24,6 +24,7 @@ class Crawler:
         self.__crawled_pages_cnt = 0
 
         self.trottle = trottle  # for this var we don't care if the user change it
+        self.show_exception_tb = show_exception_tb
 
     @property
     def dead_links(self) -> list:
@@ -45,7 +46,7 @@ class Crawler:
         """Crawl the website url given to the init"""
         self.clear()
 
-        is_dead_link, _ = Crawler._is_dead_link(self.__website_url)
+        is_dead_link, _ = self._is_dead_link(self.__website_url)
         if is_dead_link:
             # If the web site is not accessible in the first place there is no need to continue
             raise ValueError(f"The source web page link ({self.__website_url}) is not accessible")
@@ -61,7 +62,7 @@ class Crawler:
         self._check_trottle()
 
         full_link = self._create_full_link(source_link, route)
-        links = Scraper.get_web_page_links(full_link)
+        links = Scraper.get_web_page_links(full_link, self.show_exception_tb)
         logger.debug("Crawling: %s. Found %d link(s)", full_link, len(links))
 
         for link in links:
@@ -132,8 +133,7 @@ class Crawler:
 
         return False
 
-    @staticmethod
-    def _is_dead_link(link: str) -> Tuple[str, str]:
+    def _is_dead_link(self, link: str) -> Tuple[str, str]:
         """Check if link is dead using the http response code
 
         Args:
@@ -154,8 +154,8 @@ class Crawler:
         except requests.exceptions.HTTPError as e:
             return True, f"Bad status code: {e.response.status_code} '{e.response.reason}'"
         except Exception as e:
-            # This is to avoid stoping the app if one link is bad
-            logger.debug("Error occured while checking %s. %s", link, str(e))
+            if self.show_exception_tb:
+                logger.error("Error occured while checking %s", link, exc_info=True)
 
             # "Connection Error" is used to abstract the real error message sine it can be
             # Hard to read/understand. An advanced user can still see the origina exception
