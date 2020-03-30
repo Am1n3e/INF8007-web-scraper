@@ -72,10 +72,12 @@ class Crawler:
             full_link = self._create_full_link(source_link, link)
 
             if not self._is_visited(full_link):
-
                 self._mark_visited(full_link)
 
                 is_dead_link, status_code = self._is_dead_link(full_link)
+
+                logger.debug("Checking: %s %s", full_link, "Dead" if is_dead_link else "OK!")
+
                 if is_dead_link:
                     self._mark_dead(full_link, status_code)
                 elif not self.disable_crawling and self._is_internal_link(link, source_link):
