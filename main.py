@@ -47,7 +47,8 @@ def _setup_logger(verbose):
     Args:
         verbose: Flag to enable/disable debug message
     """
-    logging.getLogger().setLevel(logging.DEBUG if verbose else logging.INFO)
+    # src: The python module is the name of the source folder
+    logging.getLogger("src").setLevel(logging.DEBUG if verbose else logging.INFO)
 
 
 def main():
