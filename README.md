@@ -65,6 +65,14 @@ pages
 python main.py https://webscraper.io --verbose --trottle 10
 ```
 
+### Show exceptions trace back 
+By default the exception trace back are not shown for a cleaner output. However, to enable the 
+printing trace back, use `--show_exception_tb` flag 
+
+```sh
+python main.py https://webscraper.io --show_exception_tb
+```
+
 ### Disable crawling
 To disable crawling (go only to depth of 1), use the `--disable_crawling` flag.
 
