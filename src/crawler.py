@@ -13,7 +13,8 @@ class Crawler:
         """Init the crawler object.
 
         Args:
-            source_web_page_link: The web site link to crawl
+            website_url: The web site link to crawl
+            trottle: The trottle duration
         """
         # By using the '__' it will create a "private" var effect
         # Since mangling variables names is required to access the value
