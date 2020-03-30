@@ -1,6 +1,8 @@
 import logging
 import argparse
 
+from tabulate import tabulate
+
 from src.crawler import Crawler
 
 logging.basicConfig()
@@ -32,7 +34,8 @@ def _print_dead_links(dead_links):
         dead_links: The dead links list
     """
     if dead_links:
-        logger.info("dead links:\n\t%s", "\n\t".join(dead_links))
+        table = tabulate(dead_links, headers=["Link", "Reason"])
+        logger.info("dead links:\n%s", table)
     else:
         logger.info("No dead links found")
 

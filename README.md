@@ -65,29 +65,38 @@ python main.py https://webscraper.io --verbose --trottle 10
 ```
 INFO:src.crawler:Visited 501 page(s)
 INFO:__main__:dead links:
-    https://www.youtube.com/yt/about/en
-    https://www.wbs-law.de/eng/practice-areas/internet-law/it-law
-    https://website.com
-    https://api.webscraper.io/api/v1/sitemap?api_token=&lt
-    http://webscraper.io/&quot
-    https://api.webscraper.io/api/v1/sitemap/&lt
-    https://api.webscraper.io/api/v1/sitemaps?api_token=&lt
-    https://api.webscraper.io/api/v1/scraping-job?api_token=&lt
-    https://api.webscraper.io/api/v1/scraping-job/&lt
-    https://api.webscraper.io/api/v1/scraping-jobs?api_token=&lt
-    https://api.webscraper.io/api/v1/account?api_token=&lt
-    https://example.com/robots.txt
-    https://example.com/sitemap.xml
-    http://example.com/page
-    http://example.com/page/1
-    http://example.com/page/2
-    http://example.com/page/3
-    http://example.com/page/001
-    http://example.com/page/002
-    http://example.com/page/003
-    http://example.com/page/0
-    http://example.com/page/10
-    http://example.com/page/20
+Link                                                           Reason
+-------------------------------------------------------------  --------------------
+https://www.youtube.com/yt/about/en                            Bad status code: 404
+https://www.wbs-law.de/eng/practice-areas/internet-law/it-law  Bad status code: 410
+https://website.com                                            Connection error
+https://api.webscraper.io/api/v1/sitemap?api_token=&lt         Bad status code: 405
+http://webscraper.io/&quot                                     Bad status code: 404
+https://api.webscraper.io/api/v1/sitemap/&lt                   Bad status code: 401
+https://api.webscraper.io/api/v1/sitemaps?api_token=&lt        Bad status code: 401
+https://api.webscraper.io/api/v1/scraping-job?api_token=&lt    Bad status code: 405
+https://api.webscraper.io/api/v1/scraping-job/&lt              Bad status code: 401
+https://api.webscraper.io/api/v1/scraping-jobs?api_token=&lt   Bad status code: 401
+https://api.webscraper.io/api/v1/account?api_token=&lt         Bad status code: 401
+https://example.com/robots.txt                                 Connection error
+https://example.com/sitemap.xml                                Connection error
+http://example.com/page                                        Connection error
+http://example.com/page/1                                      Connection error
+http://example.com/page/2                                      Connection error
+http://example.com/page/3                                      Connection error
+http://example.com/page/001                                    Connection error
+http://example.com/page/002                                    Connection error
+http://example.com/page/003                                    Connection error
+http://example.com/page/0                                      Connection error
+http://example.com/page/10                                     Connection error
+http://example.com/page/20                                     Connection error
+```
+
+About **Connection error**</br>
+A connection error can be that the connection was reset/refused by peer or timeout. To know the exact error, use the `--verbose` flag.
+The error message will look like the following:
+```
+DEBUG:src.crawler:Error occured while checking http://example.com/page/20. HTTPConnectionPool(host='example.com', port=80): Max retries exceeded with url: /page/20 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x110eb7a10>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))
 ```
 
 

@@ -1,6 +1,7 @@
 import logging
 import requests
 import time
+from typing import Tuple
 
 from src.scrapper import Scraper
 from src.utils import is_valid_status_code
@@ -44,7 +45,8 @@ class Crawler:
         """Crawl the website url given to the init"""
         self.clear()
 
-        if Crawler._is_dead_link(self.__website_url):
+        is_dead_link, _ = Crawler._is_dead_link(self.__website_url)
+        if is_dead_link:
             # If the web site is not accessible in the first place there is no need to continue
             raise ValueError(f"The source web page link ({self.__website_url}) is not accessible")
 
@@ -69,8 +71,9 @@ class Crawler:
 
                 self._mark_visited(full_link)
 
-                if self._is_dead_link(full_link):
-                    self._mark_dead(full_link)
+                is_dead_link, status_code = self._is_dead_link(full_link)
+                if is_dead_link:
+                    self._mark_dead(full_link, status_code)
                 elif self._is_internal_link(link, source_link):
                     self._crawl(source_link, link)
 
@@ -104,14 +107,14 @@ class Crawler:
         """
         self.__visited_links.append(link)
 
-    def _mark_dead(self, link: str) -> None:
+    def _mark_dead(self, link: str, error_status_code: int) -> None:
         """Mark the link as dead
 
         Args:
             link: The link to mark
 
         """
-        self.__dead_links.append(link)
+        self.__dead_links.append((link, error_status_code))
 
     @staticmethod
     def _is_internal_link(link: str, source_link: str) -> bool:
@@ -130,23 +133,29 @@ class Crawler:
         return False
 
     @staticmethod
-    def _is_dead_link(link: str) -> bool:
+    def _is_dead_link(link: str) -> Tuple[str, str]:
         """Check if link is dead using the http response code
 
         Args:
             link: The link
 
         Return:
-            True if the link is dead else False
+            (True, Reason) if the link is dead else (False, None)
         """
         try:
             response = requests.get(link)
-            return not is_valid_status_code(response.status_code)
+            if not is_valid_status_code(response.status_code):
+                return True, f"Bad status code: {response.status_code}"
+            else:
+                return False, None
         except Exception as e:
             # This is to avoid stoping the app if one link is bad
-            logger.error("Failed to check page status for %s. Bad regex or bad link", link)
-            logger.exception(e)
-            return True
+            logger.debug("Error occured while checking %s. %s", link, str(e))
+
+            # "Connection Error" is used to abstract the real error message sine it can be
+            # Hard to read/understand. An advanced user can still see the origina exception
+            # using the verbose mode.
+            return True, "Connection error"
 
     @staticmethod
     def _create_full_link(source_link: str, link: str) -> str:
