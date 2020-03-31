@@ -49,6 +49,7 @@ def _setup_logger(verbose):
     """
     # src: The python module is the name of the source folder
     logging.getLogger("src").setLevel(logging.DEBUG if verbose else logging.INFO)
+    logging.getLogger(__name__).setLevel(logging.DEBUG if verbose else logging.INFO)
 
 
 def main():
