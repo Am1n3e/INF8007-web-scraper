@@ -82,7 +82,7 @@ python main.py https://webscraper.io --disable_crawling
 
 ### Sample output
 ```
-INFO:src.crawler:Visited 501 page(s)
+INFO:src.crawler:Visited 502 page(s)
 INFO:__main__:dead links:
 Link                                                           Reason
 -------------------------------------------------------------  -----------------------------------------
@@ -115,7 +115,7 @@ About **Connection error**</br>
 A connection error can be that the connection was reset/refused by peer or timeout. To know the exact error, use the `--show_exception_tb` flag.
 
 ### Exit code:
-0: Success (but some pages might not been crawled (bad links, rate limiters)
+0: Success (but some pages might not been crawled (bad links, rate limiters)</br>
 1: Fatal error (exceptions, ...)
 
 
