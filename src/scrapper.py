@@ -21,7 +21,7 @@ class Scraper:
 
         # We use part of the regex proposed in https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
         text_and_href_links = re.findall(
-            r"<a [\S]* ?href=[\'\"]?(/[^\'\"#>]+|http[s]?[^\r\n\t\f\v\"\']+)[\'\"]?|[^\'\"/](http[s]?://|www.)([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?",
+            r"<a [\S]* ?href=[\'\"]?(/[^\'\">]+|http[s]?[^\r\n\t\f\v\"\']+)[\'\"]?|[^\'\"/](http[s]?://|www.)([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?",
             body,
         )
 
