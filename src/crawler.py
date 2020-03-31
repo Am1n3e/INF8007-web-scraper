@@ -3,6 +3,8 @@ import requests
 import time
 from typing import Tuple
 
+from abc import ABC, abstractmethod
+
 from src.scrapper import Scraper
 
 logger = logging.getLogger(__name__)
@@ -12,24 +14,29 @@ class CrawlerException(Exception):
     pass
 
 
-class Crawler:
+class Crawler(ABC):
     def __init__(
-        self, website_url: str, trottle: int, show_exception_tb: bool = False, disable_crawling: bool = False
+        self, resource: str, show_exception_tb: bool, disable_crawling: bool, trottle: int, scrapper: Scraper
     ) -> None:
         """Init the crawler object.
 
         Args:
             website_url: The web site link to crawl
+            show_exception_tb: Enables exception trace back logging
+            disable_crawling: Disables crawling
             trottle: The trottle duration
         """
         # By using the '__' it will create a "private" var effect
         # Since mangling variables names is required to access the value
         self.__visited_links = []
         self.__dead_links = []
-        self.__website_url = website_url
         self.__crawled_pages_cnt = 0
+        self.__scrapper = scrapper
 
-        self.trottle = trottle  # for this var we don't care if the user change it
+        self._resource = resource  # Act as protected member
+
+        # for this var we don't care if the user change it
+        self.trottle = trottle
         self.show_exception_tb = show_exception_tb
         self.disable_crawling = disable_crawling
 
@@ -43,6 +50,22 @@ class Crawler:
         # Using a property to make sure that the dead links can't be modified (unless you mangle the name)
         return self.__dead_links
 
+    @abstractmethod
+    def _create_full_link(self, source_link: str, link: str) -> str:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _is_link_to_check(self, full_link: str) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _verify_source_resource(self) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _get_root_route(self) -> str:
+        return NotImplementedError()
+
     def clear(self) -> None:
         """Clears the visited and dead links lists"""
         self.__visited_links = []
@@ -50,50 +73,42 @@ class Crawler:
         self.__crawled_pages_cnt = 0
 
     def crawl(self) -> None:
-        """Crawl the website url given to the init"""
+        """Crawl the resource given to the init"""
         self.clear()
 
-        is_dead_link, _ = self._is_dead_link(self.__website_url)
-        if is_dead_link:
-            # If the web site is not accessible in the first place there is no need to continue
-            raise CrawlerException(f"The source web page link ({self.__website_url}) is not accessible")
+        self._verify_source_resource()
 
-        self._mark_visited(self.__website_url)
-
-        self._crawl(self.__website_url, "/")  # the "/" is for the root route (the website page it self)
+        self._crawl(self._resource, self._get_root_route())
 
         logger.info("Visited %d page(s)", len(self.__visited_links))
 
-    def _crawl(self, source_link: str, route: str):
-        """Crawl the page (source_link + route) given to the init"""
+    def _crawl(self, source: str, route: str) -> None:
+        """Crawl the page.
+
+        Args:
+            source: The page source
+            route: The page route
+        """
         self._check_trottle()
 
-        full_link = self._create_full_link(source_link, route)
-        links = Scraper.get_web_page_links(full_link, self.show_exception_tb)
+        full_link = self._create_full_link(source, route)
+        links = self.__scrapper.get_links(full_link, self.show_exception_tb)
+
         logger.debug("Crawling: %s. Found %d link(s)", full_link, len(links))
 
         for link in links:
-            full_link = self._create_full_link(source_link, link)
+            full_link = self._create_full_link(source, link)
 
             if not self._is_visited(full_link):
                 self._mark_visited(full_link)
 
-                is_dead_link, status_code = self._is_dead_link(full_link)
-
-                logger.debug("Checking: %s %s", full_link, "Dead" if is_dead_link else "OK!")
-
-                if is_dead_link:
-                    self._mark_dead(full_link, status_code)
-                elif not self.disable_crawling and self._is_internal_link(link, source_link):
-                    self._crawl(source_link, link)
-
-    def _check_trottle(self) -> None:
-        """Check if a trottle is needed and sleep is yes"""
-        self.__crawled_pages_cnt += 1
-
-        if self.trottle > 0 and self.__crawled_pages_cnt % 10 == 0:
-            logger.debug("Sleeping for %d", self.trottle)
-            time.sleep(self.trottle)
+                if self._is_link_to_check(full_link):
+                    is_dead_link, status_code = self._is_dead_link(full_link)
+                    logger.debug("Checking: %s %s", full_link, "Dead" if is_dead_link else "OK!")
+                    if is_dead_link:
+                        self._mark_dead(full_link, status_code)
+                    elif not self.disable_crawling and self._is_internal_link(link, source):
+                        self._crawl(source, link)
 
     def _is_visited(self, link: str) -> bool:
         """Check if the link is already visited
@@ -137,7 +152,7 @@ class Crawler:
         Return:
             True if the link is internal else False
         """
-        if link.startswith("/") or link.startswith(source_link):
+        if link.startswith("/") or (source_link is not None and link.startswith(source_link)):
             return True
 
         return False
@@ -171,25 +186,10 @@ class Crawler:
             # using the verbose mode.
             return True, "Connection error"
 
-    @staticmethod
-    def _create_full_link(source_link: str, link: str) -> str:
-        if link == "/":
-            # root
-            full_link = source_link
-        elif link.startswith("/"):
-            # internal links
-            full_link = source_link + link
-        else:
-            # external links
-            full_link = link
+    def _check_trottle(self) -> None:
+        """Check if a trottle is needed and sleep is yes"""
+        self.__crawled_pages_cnt += 1
 
-        if full_link.startswith("www"):
-            # This is needed fo the python requests library. all links should be either http or https
-            # We chose http, so the upstream will set to https in case it exists
-            full_link = "http://" + full_link
-
-        if full_link.endswith("/"):
-            # Remove the trailing /,  so that http://hello.com/ and http://hello.com are the same
-            full_link = full_link[:-1]
-
-        return full_link
+        if self.trottle > 0 and self.__crawled_pages_cnt % 10 == 0:
+            logger.debug("Sleeping for %d", self.trottle)
+            time.sleep(self.trottle)

@@ -27,42 +27,75 @@ pip install -r requirements.txt  # or requirement-dev.txt to install dev librari
 ## Usage
 
 ```
-usage: main.py [-h] [--verbose] [--trottle TROTTLE] [--show_exception_tb]
-               [--disable_crawling]
-               website_url
+usage: main.py [-h] [--show_exception_tb] [--verbose] {url,file} ...
 
 Web crawler application
 
 positional arguments:
-  website_url          Url of the website to crawl
+  {url,file}           Resource type
+    url                Crawl URL. url -h for more details
+    file               Crawl a file. file -h for more details
 
 optional arguments:
   -h, --help           show this help message and exit
-  --verbose            Show debug messages
-  --trottle TROTTLE    Sleep time in secs between each 10 pages (to void rate
-                       limiters)
   --show_exception_tb  Show exception trace back
-  --disable_crawling   Disable crawling (go depth of 1)
+  --verbose            Show debug messages
 ```
 
+### Crawling a URL
+```
+usage: main.py url [-h] [--trottle TROTTLE] [--disable_crawling] resource
+
+positional arguments:
+  resource            Url for the web page to crawl
+
+optional arguments:
+  -h, --help          show this help message and exit
+  --trottle TROTTLE   Sleep time in secs between each 10 pages (to void rate
+                      limiters)
+  --disable_crawling  Disable crawling (go depth of 1)
+```
 
 ```sh
-python main.py https://webscraper.io
+python main.py url https://webscraper.io
 ```
 
-### Verbose mode
-To start the app in verbose mode, the `--verbose` flag.
-
-```sh
-python main.py https://webscraper.io --verbose
-```
-
-### Trottling
+#### Trottling
 Some websites use rate limiter which blocks the scrapper, to avoid this use the trottle args to sleep after each 10
 pages
 
 ```sh
-python main.py https://webscraper.io --verbose --trottle 10
+python main.py url https://webscraper.io --trottle 5
+```
+
+#### Disable crawling
+To disable crawling (go only to depth of 1), use the `--disable_crawling` flag.
+
+```sh
+python main.py url https://webscraper.io --disable_crawling
+```
+
+### Crawling a file 
+```
+usage: main.py file [-h] resource
+
+positional arguments:
+  resource    file path of the html page to crawl
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+```sh
+python main.py file resources/webscraper.io.html
+```
+
+### Verbose mode
+To start the app in verbose mode, use the `--verbose` flag. 
+
+```sh
+python main.py --verbose url https://webscraper.io 
+python main.py --verbose file resources/webscraper.io.html
 ```
 
 ### Show exceptions trace back 
@@ -70,15 +103,10 @@ By default the exception trace back are not shown for a cleaner output. However,
 printing trace back, use `--show_exception_tb` flag 
 
 ```sh
-python main.py https://webscraper.io --show_exception_tb
+python main.py --show_exception_tb url https://webscraper.io 
+python main.py --show_exception_tb file resources/webscraper.io.html
 ```
 
-### Disable crawling
-To disable crawling (go only to depth of 1), use the `--disable_crawling` flag.
-
-```sh
-python main.py https://webscraper.io --disable_crawling
-```
 
 ### Sample output
 ```
@@ -112,11 +140,11 @@ http://example.com/page/20                                     Connection error
 ```
 
 About **Connection error**</br>
-A connection error can be that the connection was reset/refused by peer or timeout. To know the exact error, use the `--show_exception_tb` flag.
+A connection error can refere to a reset/refused by peer or timeout connection. To know the exact error, use the `--show_exception_tb` flag.
 
 ### Exit code:
-0: Success (but some pages might not been crawled (bad links, rate limiters)</br>
-1: Fatal error (exceptions, ...)
+**0**: Success (but some pages might not been crawled (bad links, rate limiters)</br>
+**1**: Fatal error (exceptions, ...)
 
 
 ## Contribution
