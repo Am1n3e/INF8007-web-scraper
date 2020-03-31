@@ -3,7 +3,7 @@ import argparse
 
 from tabulate import tabulate
 
-from src.crawler import Crawler
+from src.crawler import Crawler, CrawlerException
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -55,6 +55,8 @@ def main():
     args = _parse_args()
 
     _setup_logger(args.verbose)
+
+    failure_occured = False
     try:
         crawler = Crawler(
             args.website_url,
@@ -65,15 +67,17 @@ def main():
         crawler.crawl()
 
         _print_dead_links(crawler.dead_links)
+    except CrawlerException as exception:
+        logger.error(str(exception))
+        failure_occured = True
     except Exception as exception:
+        failure_occured = True
         # Using Broad exception to catch all errors to give a proper error message
         logger.error("Error occured while crawling  %s", args.website_url)
         if args.show_exception_tb:  # To keep the output clean
             logger.exception(exception)
 
-        exit(1)  # Useful when scripting the app
-
-    exit(0)
+    exit(1 if failure_occured else 0)
 
 
 if __name__ == "__main__":

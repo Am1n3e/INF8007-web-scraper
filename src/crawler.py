@@ -8,6 +8,10 @@ from src.scrapper import Scraper
 logger = logging.getLogger(__name__)
 
 
+class CrawlerException(Exception):
+    pass
+
+
 class Crawler:
     def __init__(
         self, website_url: str, trottle: int, show_exception_tb: bool = False, disable_crawling: bool = False
@@ -52,7 +56,7 @@ class Crawler:
         is_dead_link, _ = self._is_dead_link(self.__website_url)
         if is_dead_link:
             # If the web site is not accessible in the first place there is no need to continue
-            raise ValueError(f"The source web page link ({self.__website_url}) is not accessible")
+            raise CrawlerException(f"The source web page link ({self.__website_url}) is not accessible")
 
         self._mark_visited(self.__website_url)
 
