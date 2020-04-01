@@ -73,6 +73,13 @@ def _setup_logger(verbose):
     logging.getLogger(__name__).setLevel(logging.DEBUG if verbose else logging.INFO)
 
 
+def _print_header(resource):
+    print("*" * 100)
+    print("*" * 100)
+    print(resource)
+    print("*" * 100)
+
+
 def _crawl(crawler, args, do_exit=True):
     failure_occured = False
     try:
@@ -115,12 +122,13 @@ def _crawl_file_list(args):
 
     over_all_exit_code = 0
     for f in file_list:
+        _print_header(f)
         crawler = FileCrawler(f, args.show_exception_tb)
         exit_code = _crawl(crawler, args, do_exit=False)
         if exit_code == 1:
             over_all_exit_code = 1
 
-    sys.exit(exit_code)
+    sys.exit(over_all_exit_code)
 
 
 def main():
