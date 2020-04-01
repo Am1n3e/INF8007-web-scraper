@@ -24,16 +24,21 @@ def _parse_args():
     arg_parser = argparse.ArgumentParser(description="Web crawler application")
     arg_parser.add_argument("--show_exception_tb", action="store_true", help="Show exception trace back")
     arg_parser.add_argument("--verbose", action="store_true", help="Show debug messages")
+    arg_parser.add_argument(
+        "--disable_crawling", action="store_true", help="Disable crawling (go depth of 1). only for urls"
+    )
+    arg_parser.add_argument(
+        "--trottle",
+        type=int,
+        help="Sleep time in secs between each 10 pages (to void rate limiters). only for urls",
+        default=0,
+    )
 
     subparsers = arg_parser.add_subparsers(help="Resource type")
 
     url_parser = subparsers.add_parser("url", help="Crawl URL. url -h for more details")
     url_parser.add_argument("resource", help="Url for the web page to crawl")
-    url_parser.add_argument(
-        "--trottle", type=int, help="Sleep time in secs between each 10 pages (to void rate limiters)", default=0
-    )
     url_parser.set_defaults(func=_crawl_url)
-    url_parser.add_argument("--disable_crawling", action="store_true", help="Disable crawling (go depth of 1)")
 
     file_parser = subparsers.add_parser("file", help="Crawl a file. file -h for more details")
     file_parser.add_argument("resource", help="file path of the html page to crawl")
@@ -46,6 +51,10 @@ def _parse_args():
     std_in_parser = subparsers.add_parser("file_list", help="Crawl file list from stdin. file_list -h for more details")
     std_in_parser.add_argument("file_list", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
     std_in_parser.set_defaults(func=_crawl_file_list)
+
+    std_in_parser = subparsers.add_parser("url_list", help="Crawl url list from stdin. url_list -h for more details")
+    std_in_parser.add_argument("url_list", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
+    std_in_parser.set_defaults(func=_crawl_url_list)
 
     return arg_parser.parse_args()
 
@@ -117,18 +126,32 @@ def _crawl_html(args):
     _crawl(crawler, args)
 
 
-def _crawl_file_list(args):
-    file_list = re.split("\s+", args.file_list.read().strip())
-
+def _crawl_resource_list(resource_list, args, create_crawler):
     over_all_exit_code = 0
-    for f in file_list:
-        _print_header(f)
-        crawler = FileCrawler(f, args.show_exception_tb)
+    for resource in resource_list:
+        _print_header(resource)
+        crawler = create_crawler(resource, args)
         exit_code = _crawl(crawler, args, do_exit=False)
         if exit_code == 1:
             over_all_exit_code = 1
 
     sys.exit(over_all_exit_code)
+
+
+def _crawl_url_list(args):
+    def create_crawler(resource, args):
+        return WebCrawler(resource, args.show_exception_tb, args.trottle, args.disable_crawling)
+
+    url_list = re.split(r"\s+", args.url_list.read().strip())
+    _crawl_resource_list(url_list, args, create_crawler)
+
+
+def _crawl_file_list(args):
+    def create_crawler(resource, args):
+        return FileCrawler(resource, args.show_exception_tb)
+
+    file_list = re.split(r"\s+", args.file_list.read().strip())
+    _crawl_resource_list(file_list, args, create_crawler)
 
 
 def main():
