@@ -1,3 +1,4 @@
+import sys
 import logging
 import argparse
 from tabulate import tabulate
@@ -5,6 +6,7 @@ from tabulate import tabulate
 from src.crawler import CrawlerException
 from src.file_crawler import FileCrawler
 from src.web_crawler import WebCrawler
+from src.html_crawler import HTMLCrawler
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -19,6 +21,9 @@ def _parse_args():
         The command line args
     """
     arg_parser = argparse.ArgumentParser(description="Web crawler application")
+    arg_parser.add_argument("--show_exception_tb", action="store_true", help="Show exception trace back")
+    arg_parser.add_argument("--verbose", action="store_true", help="Show debug messages")
+
     subparsers = arg_parser.add_subparsers(help="Resource type")
 
     url_parser = subparsers.add_parser("url", help="Crawl URL. url -h for more details")
@@ -33,8 +38,9 @@ def _parse_args():
     file_parser.add_argument("resource", help="file path of the html page to crawl")
     file_parser.set_defaults(func=_crawl_file)
 
-    arg_parser.add_argument("--show_exception_tb", action="store_true", help="Show exception trace back")
-    arg_parser.add_argument("--verbose", action="store_true", help="Show debug messages")
+    std_in_parser = subparsers.add_parser("html", help="Crawl html content from stdin. html -h for more details")
+    std_in_parser.add_argument("html_content", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
+    std_in_parser.set_defaults(func=_crawl_html)
 
     return arg_parser.parse_args()
 
@@ -73,7 +79,7 @@ def _crawl(crawler, args):
     except Exception as exception:
         failure_occured = True
         # Using Broad exception to catch all errors to give a proper error message
-        logger.error("Error occured while crawling  %s", args.resource)
+        logger.error("Error occured while crawling")
         if args.show_exception_tb:  # To keep the output clean
             logger.exception(exception)
 
@@ -87,6 +93,11 @@ def _crawl_url(args):
 
 def _crawl_file(args):
     crawler = FileCrawler(args.resource, args.show_exception_tb)
+    _crawl(crawler, args)
+
+
+def _crawl_html(args):
+    crawler = HTMLCrawler(args.html_content.read(), args.show_exception_tb)
     _crawl(crawler, args)
 
 

@@ -38,6 +38,6 @@ class FileScrapper(Scraper):
             logger.error("Failed to get page content for %s. Invalid html file", file_path)
             if show_exception_tb:
                 logger.exception(e)
-            return ""
+            return content
 
         return content

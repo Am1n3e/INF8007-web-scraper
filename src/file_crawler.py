@@ -20,7 +20,7 @@ class FileCrawler(Crawler):
     def _verify_source_resource(self):
         if not os.path.isfile(self._resource):
             # If the file does not exists there is no need to continue
-            raise CrawlerException(f"The source file ({self.__file_path}) does not exists")
+            raise CrawlerException(f"The source file ({self._resource}) does not exists")
 
     def _is_link_to_check(self, full_link):
         # Only external links can be checked when using a file
