@@ -1,5 +1,6 @@
 import logging
-
+from lxml import etree
+from io import StringIO
 from src.scrapper import Scraper
 
 logger = logging.getLogger(__name__)
@@ -27,4 +28,16 @@ class FileScrapper(Scraper):
                 logger.exception(e)
             return ""
 
-        return web_page_content
+        return cls._validate_html_file(resource, web_page_content, show_exception_tb)
+
+    @classmethod
+    def _validate_html_file(cls, file_path, content, show_exception_tb):
+        try:
+            etree.parse(StringIO(content), etree.HTMLParser(recover=False))
+        except Exception as e:
+            logger.error("Failed to get page content for %s. Invalid html file", file_path)
+            if show_exception_tb:
+                logger.exception(e)
+            return ""
+
+        return content
