@@ -1,3 +1,4 @@
+import re
 import sys
 import logging
 import argparse
@@ -42,6 +43,10 @@ def _parse_args():
     std_in_parser.add_argument("html_content", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
     std_in_parser.set_defaults(func=_crawl_html)
 
+    std_in_parser = subparsers.add_parser("file_list", help="Crawl file list from stdin. file_list -h for more details")
+    std_in_parser.add_argument("file_list", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
+    std_in_parser.set_defaults(func=_crawl_file_list)
+
     return arg_parser.parse_args()
 
 
@@ -68,7 +73,7 @@ def _setup_logger(verbose):
     logging.getLogger(__name__).setLevel(logging.DEBUG if verbose else logging.INFO)
 
 
-def _crawl(crawler, args):
+def _crawl(crawler, args, do_exit=True):
     failure_occured = False
     try:
         crawler.crawl()
@@ -83,7 +88,11 @@ def _crawl(crawler, args):
         if args.show_exception_tb:  # To keep the output clean
             logger.exception(exception)
 
-    exit(1 if failure_occured else 0)
+    exit_code = 1 if failure_occured else 0
+    if do_exit:
+        sys.exit(exit_code)
+    else:
+        return exit_code
 
 
 def _crawl_url(args):
@@ -99,6 +108,19 @@ def _crawl_file(args):
 def _crawl_html(args):
     crawler = HTMLCrawler(args.html_content.read(), args.show_exception_tb)
     _crawl(crawler, args)
+
+
+def _crawl_file_list(args):
+    file_list = re.split("\s+", args.file_list.read().strip())
+
+    over_all_exit_code = 0
+    for f in file_list:
+        crawler = FileCrawler(f, args.show_exception_tb)
+        exit_code = _crawl(crawler, args, do_exit=False)
+        if exit_code == 1:
+            over_all_exit_code = 1
+
+    sys.exit(exit_code)
 
 
 def main():
