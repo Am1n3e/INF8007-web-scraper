@@ -5,6 +5,23 @@
 REQUIRED_APPS=(git npm lsof)
 
 #######################################
+# Prints the command line arguments 
+# Arguments:
+#   node_webserver_git_repo: The git repository 
+#   node_webserver_port: The port to start the server
+#   git_clone_dest: The destination for the git clone
+#######################################
+function print_cmd_args() {
+    # This is usefull for automation since using the log we can see the 
+    # command line arguments that we used
+    echo ">>> Command line arguments"
+    echo "node_webserver_git_repo = $node_webserver_git_repo"
+    echo "node_webserver_port     = $node_webserver_port"
+    echo "git_clone_dest          = $git_clone_dest"
+    echo "**********************************"
+}
+
+#######################################
 # Print error message with the missing args and exits with 1.
 # Arguments:
 #   arg_name: Missing argument name
@@ -91,7 +108,7 @@ function setup_webserver() {
 #######################################
 function run_crawler() {
     echo ">>> Running the crawler"
-    python main.py --verbose url "http://localhost:$1"  
+    python main.py --verbose url "http://localhost:$1"
 
     echo "**********************************"
 }
@@ -114,22 +131,6 @@ function clean_up() {
     echo "**********************************"
 }
 
-#######################################
-# Prints the command line arguments 
-# Arguments:
-#   node_webserver_git_repo: The git repository 
-#   node_webserver_port: The port to start the server
-#   git_clone_dest: The destination for the git clone
-#######################################
-function print_cmd_args() {
-    # This is usefull for automation since using the log we can see the 
-    # command line arguments that we used
-    echo ">>> Command line arguments"
-    echo "node_webserver_git_repo = $node_webserver_git_repo"
-    echo "node_webserver_port     = $node_webserver_port"
-    echo "git_clone_dest          = $git_clone_dest"
-    echo "**********************************"
-}
 
 # Get command line arguments
 [ -z "$1" ] && report_missing_arg "node webserver git repository" || node_webserver_git_repo=$1
