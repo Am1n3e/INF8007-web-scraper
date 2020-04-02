@@ -27,8 +27,8 @@ pip install -r requirements.txt  # or requirement-dev.txt to install dev librari
 ## Usage
 
 ```
-age: main.py [-h] [--show_exception_tb] [--verbose] [--disable_crawling]
-               [--trottle TROTTLE]
+usage: main.py [-h] [--show_exception_tb] [--verbose] [--disable_crawling]
+               [--throttle_duration_sec THROTTLE_DURATION_SEC]
                {url,file,html,file_list,url_list} ...
 
 Web crawler application
@@ -50,7 +50,8 @@ optional arguments:
   --show_exception_tb   Show exception trace back
   --verbose             Show debug messages
   --disable_crawling    Disable crawling (go depth of 1). only for urls
-  --trottle TROTTLE     Sleep time in secs between each 10 pages (to void rate
+  --throttle_duration_sec THROTTLE_DURATION_SEC
+                        Sleep time in secs between each 10 pages (to void rate
                         limiters). only for urls
 ```
 
@@ -65,6 +66,7 @@ optional arguments:
   -h, --help          show this help message and exit
 ```
 
+**Example**
 ```sh
 python main.py url https://webscraper.io
 ```
@@ -80,6 +82,7 @@ optional arguments:
   -h, --help  show this help message and exit
 ```
 
+**Example**
 ```sh
 python main.py file resources/webscraper.io.html
 ```
@@ -95,6 +98,7 @@ optional arguments:
   -h, --help    show this help message and exit
 ```
 
+**Example**
 ```sh
 python main.py html < resources/webscraper.io.html
 
@@ -113,6 +117,7 @@ optional arguments:
   -h, --help  show this help message and exit
 ```
 
+**Example**
 ```sh
 python main.py  file_list < resources/file_list_1
 
@@ -134,6 +139,7 @@ optional arguments:
   -h, --help  show this help message and exit
 ```
 
+**Example**
 ```sh
 python main.py  url_list < resources/url_list_1
 
@@ -143,36 +149,40 @@ cat resources/url_list_2 | python main.py  url_list
 # or using a pip from stdout
 echo https://webscraper.io && echo invalid_url | python main.py  file_list 
 ```
-
-#### Trottling
-Some websites use rate limiter which blocks the scrapper, to avoid this use the `--trotlle_duration_sec` argument to sleep after each 10
+### Optional arguments
+#### Throttling
+Some websites use rate limiter which blocks the scrapper, to avoid this use the `--throtlle_duration_sec` argument to sleep after each 10
 pages
 Note that this argument is only applicable for url and url list
 
+**Example**
 ```sh
-python main.py --trottle_duration_sec 5 url https://webscraper.io 
+python main.py --throttle_duration_sec 5 url https://webscraper.io 
 ```
 
 #### Disable crawling
 To disable crawling (go only to depth of 1), use the `--disable_crawling` flag.</br>
 Note that this argument is only applicable for url and url list
 
+**Example**
 ```sh
 python main.py --disable_crawling url https://webscraper.io 
 ```
 
-### Verbose mode
+#### Verbose mode
 To start the application in verbose mode, use the `--verbose` flag. 
 
+**Example**
 ```sh
 python main.py --verbose url https://webscraper.io 
 python main.py --verbose file resources/webscraper.io.html
 ```
 
-### Show exceptions trace back 
+#### Show exceptions trace back 
 By default the exception trace back are not shown for a cleaner output. However, to enable the 
 printing trace back, use `--show_exception_tb` flag 
 
+**Example**
 ```sh
 python main.py --show_exception_tb url https://webscraper.io 
 python main.py --show_exception_tb file resources/webscraper.io.html
