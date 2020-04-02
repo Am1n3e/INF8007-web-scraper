@@ -3,8 +3,9 @@ import sys
 import logging
 import argparse
 from tabulate import tabulate
+from typing import List, Callable
 
-from src.crawler import CrawlerException
+from src.crawler import Crawler, CrawlerException
 from src.file_crawler import FileCrawler
 from src.web_crawler import WebCrawler
 from src.html_crawler import HTMLCrawler
@@ -12,7 +13,7 @@ from src.html_crawler import HTMLCrawler
 logger = logging.getLogger(__name__)
 
 
-def _parse_args():
+def _parse_args() -> argparse.Namespace:
     """Parse command line arguments
 
     Raises
@@ -58,7 +59,7 @@ def _parse_args():
     return arg_parser.parse_args()
 
 
-def _print_dead_links(dead_links):
+def _print_dead_links(dead_links: List):
     """Print the dead links to console.
 
     Args:
@@ -71,7 +72,7 @@ def _print_dead_links(dead_links):
         logger.info("No dead links found")
 
 
-def _setup_logger(logger_name, verbose):
+def _setup_logger(logger_name: str, verbose: bool) -> None:
     """Setup a logger.
     Args:
         logger_name: The logger name
@@ -96,7 +97,7 @@ def _setup_logger(logger_name, verbose):
     main_logger.addHandler(error_stream)
 
 
-def _setup_loggers(verbose):
+def _setup_loggers(verbose: bool) -> None:
     """Setup the application loggers.
     Args:
         verbose: Flag to enable/disable debug message
@@ -105,14 +106,29 @@ def _setup_loggers(verbose):
     _setup_logger("src", verbose)  # src: The python module is the name of the source folder
 
 
-def _print_header(resource):
+def _print_header(resource: str) -> None:
+    """Print a header to console (usefull to split output when using list urls or files)
+
+    Args:
+        resource: The resource name
+    """
+
     print("*" * 100)
     print("*" * 100)
     print(resource)
     print("*" * 100)
 
 
-def _crawl(crawler, args):
+def _crawl(crawler: Crawler, args: argparse.Namespace) -> int:
+    """Crawl using the provided crawler.
+
+    Args:
+        crawler: The crawler object.
+        args: The command line arguments
+
+    Returns:
+        0 on success, else 1
+    """
     failure_occured = False
     try:
         crawler.crawl()
@@ -130,22 +146,55 @@ def _crawl(crawler, args):
     return 1 if failure_occured else 0
 
 
-def _crawl_url(args):
+def _crawl_url(args: argparse.Namespace) -> int:
+    """Crawl a url.
+
+    Args:
+        args: The command line arguments
+
+    Returns:
+        0 on success, else 1
+    """
     crawler = WebCrawler(args.resource, args.show_exception_tb, args.trottle, args.disable_crawling)
     return _crawl(crawler, args)
 
 
-def _crawl_file(args):
+def _crawl_file(args: argparse.Namespace) -> int:
+    """Crawl a file.
+
+    Args:
+        args: The command line arguments
+
+    Returns:
+        0 on success, else 1
+    """
     crawler = FileCrawler(args.resource, args.show_exception_tb)
     return _crawl(crawler, args)
 
 
-def _crawl_html(args):
+def _crawl_html(args: argparse.Namespace) -> int:
+    """Crawl html content.
+
+    Args:
+        args: The command line arguments
+
+    Returns:
+        0 on success, else 1
+    """
     crawler = HTMLCrawler(args.html_content.read(), args.show_exception_tb)
     return _crawl(crawler, args)
 
 
-def _crawl_resource_list(resource_list, args, create_crawler):
+def _crawl_resource_list(resource_list: List[str], args: argparse.Namespace, create_crawler: Callable):
+    """Crawl a resource (file or urls).
+
+    Args:
+        resource_list: The resource list
+        args: The command line arguments
+
+    Returns:
+        0 on success, else 1
+    """
     over_all_exit_code = 0
     for resource in resource_list:
         _print_header(resource)
@@ -157,7 +206,16 @@ def _crawl_resource_list(resource_list, args, create_crawler):
     return over_all_exit_code
 
 
-def _crawl_url_list(args):
+def _crawl_url_list(args: argparse.Namespace) -> int:
+    """Crawl a url list.
+
+    Args:
+        args: The command line arguments
+
+    Returns:
+        0 on success, else 1
+    """
+
     def create_crawler(resource, args):
         return WebCrawler(resource, args.show_exception_tb, args.trottle, args.disable_crawling)
 
@@ -165,7 +223,16 @@ def _crawl_url_list(args):
     return _crawl_resource_list(url_list, args, create_crawler)
 
 
-def _crawl_file_list(args):
+def _crawl_file_list(args: argparse.Namespace) -> int:
+    """Crawl a file list.
+
+    Args:
+        args: The command line arguments
+
+    Returns:
+        0 on success, else 1
+    """
+
     def create_crawler(resource, args):
         return FileCrawler(resource, args.show_exception_tb)
 
