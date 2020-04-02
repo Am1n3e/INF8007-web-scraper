@@ -5,6 +5,28 @@
 REQUIRED_APPS=(git npm lsof curl)
 
 #######################################
+# Prints header (For better output) 
+# Arguments:
+#   header_text: The header text (title)
+#######################################
+function print_header() {
+    echo "#************************************************************"
+    echo "# $1"
+    echo "#************************************************************"
+}
+
+#######################################
+# Prints footer (For better output) 
+# Arguments:
+#   None
+#######################################
+function print_footer() {
+    echo "#------------------------------------------------------------"
+    echo ""
+    echo ""
+}
+
+#######################################
 # Prints the command line arguments 
 # Arguments:
 #   node_webserver_git_repo: The git repository 
@@ -14,11 +36,14 @@ REQUIRED_APPS=(git npm lsof curl)
 function print_cmd_args() {
     # This is usefull for automation since using the log we can see the 
     # command line arguments that we used
-    echo ">>> Command line arguments"
+
+    print_header "Command line arguments"
+
     echo "node_webserver_git_repo = $node_webserver_git_repo"
     echo "node_webserver_port     = $node_webserver_port"
     echo "git_clone_dest          = $git_clone_dest"
-    echo "**********************************"
+
+    print_footer
 }
 
 #######################################
@@ -38,7 +63,7 @@ function report_missing_arg() {
 #   None
 #######################################
 function check_requirements() {
-    echo ">>> Checking requirements"
+    print_header "Check requirements"
 
     requirements_ok=1
     for app in "${REQUIRED_APPS[@]}"; do
@@ -60,7 +85,8 @@ function check_requirements() {
     else
         echo "Checking requirements ... OK!"
     fi
-    echo "**********************************"
+
+    print_footer
 }
 
 #######################################
@@ -71,6 +97,8 @@ function check_requirements() {
 #   git_clone_dest: The destination for the git clone
 #######################################
 function setup_webserver() {
+    print_header "Setup webserver"
+
     echo ">>> Cloning $1"
     if [ -d "$3" ]; then
         echo "$3 directory exits already. Do you want to delete and re-clone [y/N] ? "
@@ -96,7 +124,7 @@ function setup_webserver() {
     npm start & # & to start in the back ground 
     cd -
 
-    echo "Waiting for server to start ..."
+    echo ">>> Waiting for server to start ..."
     # When the curl exit code is 0, that means that server is started
     # The output of the curl is redirected to /dev/null to not polute the output
     until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT); do
@@ -107,7 +135,7 @@ function setup_webserver() {
         # The user will need to hit CTRL+C to terminate
     done
 
-    echo "**********************************"
+    print_footer
 }
 
 #######################################
@@ -116,10 +144,11 @@ function setup_webserver() {
 #   node_webserver_port: The port to start the server
 #######################################
 function run_crawler() {
-    echo ">>> Running the crawler"
+    print_header "Running the crawler"
+
     python main.py --verbose url "http://localhost:$1"
 
-    echo "**********************************"
+    print_footer
 }
 
 #######################################
@@ -128,8 +157,10 @@ function run_crawler() {
 #   node_webserver_port: The port to start the server
 #######################################
 function clean_up() {
+    print_header "Clean up"
+
     # Terminating the server since it was started by this script 
-    echo "Terminating the server"
+    echo ">>> Terminating the server"
     # If the server started successfully, we can safely assume that pid returned by the lsof command
     # Is the PID of the server we started
 
@@ -137,7 +168,7 @@ function clean_up() {
     # the kill -9 sill send a SIGKILL to the process
     kill -9 `lsof -i:$node_webserver_port -t`
 
-    echo "**********************************"
+    print_footer
 }
 
 
@@ -146,6 +177,7 @@ function clean_up() {
 [ -z "$2" ] && report_missing_arg "node webserver port" || node_webserver_port=$2
 [ -z "$3" ] && git_clone_dest=$(pwd) || git_clone_dest=$3 # Added this argument in order to  choose where to clone
 
+print_cmd_args
 
 check_requirements
 
