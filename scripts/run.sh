@@ -73,7 +73,7 @@ function check_requirements() {
 function setup_webserver() {
     echo ">>> Cloning $1"
     if [ -d "$3" ]; then
-        echo "$3 directory exits alread. Do you want to delete and re-clone [y/N] ? "
+        echo "$3 directory exits already. Do you want to delete and re-clone [y/N] ? "
         read del_dir
         if [ "$del_dir" == "y" ]; then
             rm -rf $3
