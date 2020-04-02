@@ -27,19 +27,31 @@ pip install -r requirements.txt  # or requirement-dev.txt to install dev librari
 ## Usage
 
 ```
-usage: main.py [-h] [--show_exception_tb] [--verbose] {url,file} ...
+age: main.py [-h] [--show_exception_tb] [--verbose] [--disable_crawling]
+               [--trottle TROTTLE]
+               {url,file,html,file_list,url_list} ...
 
 Web crawler application
 
 positional arguments:
-  {url,file}           Resource type
-    url                Crawl URL. url -h for more details
-    file               Crawl a file. file -h for more details
+  {url,file,html,file_list,url_list}
+                        Resource type
+    url                 Crawl URL. url -h for more details
+    file                Crawl a file. file -h for more details
+    html                Crawl html content from stdin. html -h for more
+                        details
+    file_list           Crawl file list from stdin. file_list -h for more
+                        details
+    url_list            Crawl url list from stdin. url_list -h for more
+                        details
 
 optional arguments:
-  -h, --help           show this help message and exit
-  --show_exception_tb  Show exception trace back
-  --verbose            Show debug messages
+  -h, --help            show this help message and exit
+  --show_exception_tb   Show exception trace back
+  --verbose             Show debug messages
+  --disable_crawling    Disable crawling (go depth of 1). only for urls
+  --trottle TROTTLE     Sleep time in secs between each 10 pages (to void rate
+                        limiters). only for urls
 ```
 
 ### Crawling a URL
@@ -51,28 +63,10 @@ positional arguments:
 
 optional arguments:
   -h, --help          show this help message and exit
-  --trottle TROTTLE   Sleep time in secs between each 10 pages (to void rate
-                      limiters)
-  --disable_crawling  Disable crawling (go depth of 1)
 ```
 
 ```sh
 python main.py url https://webscraper.io
-```
-
-#### Trottling
-Some websites use rate limiter which blocks the scrapper, to avoid this use the trottle args to sleep after each 10
-pages
-
-```sh
-python main.py url https://webscraper.io --trottle 5
-```
-
-#### Disable crawling
-To disable crawling (go only to depth of 1), use the `--disable_crawling` flag.
-
-```sh
-python main.py url https://webscraper.io --disable_crawling
 ```
 
 ### Crawling a file 
@@ -88,6 +82,83 @@ optional arguments:
 
 ```sh
 python main.py file resources/webscraper.io.html
+```
+
+### Crawling html content from stdin
+```
+usage: main.py html [-h] [html_content]
+
+positional arguments:
+  html_content
+
+optional arguments:
+  -h, --help    show this help message and exit
+```
+
+```sh
+python main.py html < resources/webscraper.io.html
+
+# or using a pipe
+cat resources/webscraper.io.html | python main.py html
+```
+
+### Crawling file list from stdin
+```
+usage: main.py file_list [-h] [file_list]
+
+positional arguments:
+  file_list
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+```sh
+python main.py  file_list < resources/file_list_1
+
+# or using a pipe from a file 
+cat resources/file_list_2 | python main.py  file_list
+
+# or using a pip from stdout
+echo resources/webscraper.io.html && echo resources/invalid.html| python main.py  file_list 
+```
+
+### Crawling url list from stdin
+```
+usage: main.py url_list [-h] [url_list]
+
+positional arguments:
+  url_list
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+
+```sh
+python main.py  url_list < resources/url_list_1
+
+# or using a pipe from a file 
+cat resources/url_list_2 | python main.py  url_list
+
+# or using a pip from stdout
+echo https://webscraper.io && echo invalid_url | python main.py  file_list 
+```
+
+#### Trottling
+Some websites use rate limiter which blocks the scrapper, to avoid this use the `--trotlle_duration_sec` arg to sleep after each 10
+pages
+Note that this argument is only applicable for url and url list
+
+```sh
+python main.py --trottle_duration_sec 5 url https://webscraper.io 
+```
+
+#### Disable crawling
+To disable crawling (go only to depth of 1), use the `--disable_crawling` flag.</br>
+Note that this argument is only applicable for url and url list
+
+```sh
+python main.py --disable_crawling url https://webscraper.io 
 ```
 
 ### Verbose mode
@@ -110,7 +181,7 @@ python main.py --show_exception_tb file resources/webscraper.io.html
 
 ### Sample output
 ```
-INFO:src.crawler:Visited 502 page(s)
+INFO:src.crawler:Visited 501 page(s)
 INFO:__main__:dead links:
 Link                                                           Reason
 -------------------------------------------------------------  -----------------------------------------
