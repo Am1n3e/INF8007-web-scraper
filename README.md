@@ -227,6 +227,124 @@ A connection error can refer to a reset/refused by peer or timeout connection. T
 **0**: Success (but some pages might not been crawled (bad links, rate limiters)</br>
 **1**: Fatal error (exceptions, ...)
 
+## Running the crawler against a node server
+
+This repository also provides a bash script that will run the crawler against a node web server
+
+### Requirements
+
+The bash script requires the following binaries:</br>
+- git (we used version 2.24.1)</br>
+- npm (we used version 6.13.4)</br>
+- lsof (we used version 4.91)</br>
+- curl (we used 7.64.1)</br>
+
+### Usage
+```
+Usage: run.sh node_webserver_git_repo node_webserver_port [git_clone_dest]
+
+positional arguments
+        node_webserver_git_repo: The node webserver git repository
+        node_webserver_port: The port to start the node webserver
+        git_clone_dest: Set the destination for git clone. Optional default to pwd
+```
+
+**The script will perform the following:**</br>
+- Clones the web server source code using the provided git repository in the provided destination</br>
+- Install the npm packages</br>
+- Run the server on the provided port</br>
+- Run the crawler</br>
+- Terminate the server
+
+**Notes**</br>
+- Since the script does not control the cloned web server, we assumed that it a working webserver. Any error will be just dumped to the user.</br>
+- If the git destination folder exists, a prompt will ask if repository needs to be re-cloned</br>
+```
+scratch directory exits already. Do you want to delete and re-clone [y/N] ?
+```
+
+### Sample output
+
+```sh
+/scripts/run.sh https://github.com/bhanushalimahesh3/node-website.git 4000 scratch
+```
+
+```
+#************************************************************
+# Command line arguments
+#************************************************************
+node_webserver_git_repo = https://github.com/bhanushalimahesh3/node-website.git
+node_webserver_port     = 4000
+git_clone_dest          = scratch
+#------------------------------------------------------------
+
+
+#************************************************************
+# Check requirements
+#************************************************************
+git ... Found
+npm ... Found
+lsof ... Found
+curl ... Found
+Python env ... enabled!
+Checking requirements ... OK!
+#------------------------------------------------------------
+
+
+#************************************************************
+# Setup webserver
+#************************************************************
+>>> Cloning https://github.com/bhanushalimahesh3/node-website.git
+scratch directory exits already. Do you want to delete and re-clone [y/N] ?
+y
+Cloning into 'scratch'...
+remote: Enumerating objects: 1146, done.
+remote: Counting objects: 100% (1146/1146), done.
+remote: Compressing objects: 100% (842/842), done.
+remote: Total 1146 (delta 242), reused 1143 (delta 242), pack-reused 0
+Receiving objects: 100% (1146/1146), 1.53 MiB | 2.92 MiB/s, done.
+Resolving deltas: 100% (242/242), done.
+>>> Installing npm package
+npm WARN saveError ENOENT: no such file or directory, open '/Users/amineelhattami/work/INF8007-web-scraper/package.json'
+npm WARN enoent ENOENT: no such file or directory, open '/Users/amineelhattami/work/INF8007-web-scraper/package.json'
+npm WARN INF8007-web-scraper No description
+npm WARN INF8007-web-scraper No repository field.
+npm WARN INF8007-web-scraper No README data
+npm WARN INF8007-web-scraper No license field.
+
+up to date in 0.552s
+found 0 vulnerabilities
+
+>>> Running the web server
+/Users/amineelhattami/work/INF8007-web-scraper
+>>> Waiting for server to start ...
+.
+
+> website@0.0.0 start /Users/amineelhattami/work/INF8007-web-scraper/scratch
+> node ./bin/www
+
+#------------------------------------------------------------
+
+
+#************************************************************
+# Running the crawler
+#************************************************************
+2020-04-02 19:49:12,958 - src.crawler - DEBUG - Crawling: http://localhost:4000. Found 2 link(s)
+2020-04-02 19:49:12,964 - src.crawler - DEBUG - Checking: http://localhost:4000/about OK!
+2020-04-02 19:49:12,970 - src.crawler - DEBUG - Crawling: http://localhost:4000/about. Found 2 link(s)
+2020-04-02 19:49:12,976 - src.crawler - DEBUG - Checking: http://localhost:4000/contact OK!
+2020-04-02 19:49:12,983 - src.crawler - DEBUG - Crawling: http://localhost:4000/contact. Found 2 link(s)
+2020-04-02 19:49:12,983 - src.crawler - INFO - Visited 2 page(s)
+2020-04-02 19:49:12,983 - __main__ - INFO - No dead links found
+#------------------------------------------------------------
+
+
+#************************************************************
+# Clean up
+#************************************************************
+>>> Terminating the server
+#------------------------------------------------------------
+```
 
 ## Contribution
 
@@ -236,7 +354,7 @@ We use [black](https://github.com/psf/black) to format the source code and make 
 
 Usage:
 
-```bash
+```sh
 # Current directory is assumed to be root folder of the project
 
 black .
@@ -248,8 +366,12 @@ We use [pylint](https://www.pylint.org) to link the source code.
 
 Usage:
 
-```bash
+```sh
 # Current directory is assumed to be root folder of the project
 
 pylint .
 ```
+
+### Bash script
+
+For bash scripts we follow [The google style guide](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=2ahUKEwjT5q_W9sroAhXDU80KHYrnDxwQFjAAegQIBhAB&url=https%3A%2F%2Fgoogle.github.io%2Fstyleguide%2Fshell.xml&usg=AOvVaw3vE76VbFUMz5kmsV8pKzYX)
