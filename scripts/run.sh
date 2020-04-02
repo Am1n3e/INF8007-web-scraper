@@ -47,13 +47,26 @@ function print_cmd_args() {
 }
 
 #######################################
+# Prints the usage
+# Arguments:
+#   None
+#######################################
+display_usage() { 
+	echo -e "\nUsage: run.sh node_webserver_git_repo node_webserver_port [git_clone_dest]\n" 
+    echo -e "positional arguments"
+    echo -e "\tnode_webserver_git_repo: The node webserver git repository"
+    echo -e "\tnode_webserver_port: The port to start the node webserver"
+    echo -e "\tgit_clone_dest: Set the destination for git clone. Optional default to pwd"
+}
+
+#######################################
 # Print error message with the missing args and exits with 1.
 # Arguments:
 #   arg_name: Missing argument name
 #######################################
 function report_missing_arg() {
     echo "Error: Missing $1 argument"
-    echo "Usage: run.sh node_webserver_git_repo node_webserver_port <git_clone_dest>"
+    display_usage
     exit 1
 }
 
@@ -171,6 +184,8 @@ function clean_up() {
     print_footer
 }
 
+
+###################################Main####################################
 
 # Get command line arguments
 [ -z "$1" ] && report_missing_arg "node webserver git repository" || node_webserver_git_repo=$1
