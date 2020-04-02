@@ -20,7 +20,7 @@ class Crawler(ABC):
         resource: str,
         show_exception_tb: bool,
         disable_crawling: bool,
-        trottle_duration_sec: int,
+        throttle_duration_sec: int,
         scrapper: Scraper,
     ) -> None:
         """Init the crawler object.
@@ -29,7 +29,7 @@ class Crawler(ABC):
             website_url: The web site link to crawl
             show_exception_tb: Enables exception trace back logging
             disable_crawling: Disables crawling
-            trottle: The trottle duration
+            throttle_duration_sec: The trottle duration
         """
         # By using the '__' it will create a "private" var effect
         # Since mangling variables names is required to access the value
@@ -41,7 +41,7 @@ class Crawler(ABC):
         self._resource = resource  # Act as protected member
 
         # for this var we don't care if the user change it
-        self.trottle_duration_sec = trottle_duration_sec
+        self.throttle_duration_sec = throttle_duration_sec
         self.show_exception_tb = show_exception_tb
         self.disable_crawling = disable_crawling
 
@@ -195,6 +195,6 @@ class Crawler(ABC):
         """Check if a trottle is needed and sleep is yes"""
         self.__crawled_pages_cnt += 1
 
-        if self.trottle_duration_sec > 0 and self.__crawled_pages_cnt % 10 == 0:
-            logger.debug("Sleeping for %d", self.trottle_duration_sec)
-            time.sleep(self.trottle_duration_sec)
+        if self.throttle_duration_sec > 0 and self.__crawled_pages_cnt % 10 == 0:
+            logger.debug("Sleeping for %d", self.throttle_duration_sec)
+            time.sleep(self.throttle_duration_sec)

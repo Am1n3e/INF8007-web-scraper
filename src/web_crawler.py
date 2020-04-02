@@ -4,7 +4,7 @@ from src.web_scrapper import WebScrapper
 
 class WebCrawler(Crawler):
     def __init__(
-        self, webpage_url: str, show_exception_tb: bool, trottle_duration_sec: int, disable_crawling: bool
+        self, webpage_url: str, show_exception_tb: bool, throttle_duration_sec: int, disable_crawling: bool
     ) -> None:
         """Init the web crawler object.
 
@@ -12,7 +12,7 @@ class WebCrawler(Crawler):
             web_page_url: The web page url to crawl
             show_exception_tb: Enables exception trace back logging
         """
-        super().__init__(webpage_url, show_exception_tb, disable_crawling, trottle_duration_sec, WebScrapper)
+        super().__init__(webpage_url, show_exception_tb, disable_crawling, throttle_duration_sec, WebScrapper)
 
     def _get_root_route(self) -> str:
         return "/"

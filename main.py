@@ -28,7 +28,7 @@ def _parse_args() -> argparse.Namespace:
         "--disable_crawling", action="store_true", help="Disable crawling (go depth of 1). only for urls"
     )
     arg_parser.add_argument(
-        "--trottle_duration_sec",
+        "--throttle_duration_sec",
         type=int,
         help="Sleep time in secs between each 10 pages (to void rate limiters). only for urls",
         default=0,
@@ -155,7 +155,7 @@ def _crawl_url(args: argparse.Namespace) -> int:
     Returns:
         0 on success, else 1
     """
-    crawler = WebCrawler(args.resource, args.show_exception_tb, args.trottle_duration_sec, args.disable_crawling)
+    crawler = WebCrawler(args.resource, args.show_exception_tb, args.throttle_duration_sec, args.disable_crawling)
     return _crawl(crawler, args)
 
 
@@ -217,7 +217,7 @@ def _crawl_url_list(args: argparse.Namespace) -> int:
     """
 
     def create_crawler(resource, args):
-        return WebCrawler(resource, args.show_exception_tb, args.trottle_duration_sec, args.disable_crawling)
+        return WebCrawler(resource, args.show_exception_tb, args.throttle_duration_sec, args.disable_crawling)
 
     url_list = re.split(r"\s+", args.url_list.read().strip())
     return _crawl_resource_list(url_list, args, create_crawler)
