@@ -9,7 +9,6 @@ from src.file_crawler import FileCrawler
 from src.web_crawler import WebCrawler
 from src.html_crawler import HTMLCrawler
 
-logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -72,14 +71,38 @@ def _print_dead_links(dead_links):
         logger.info("No dead links found")
 
 
-def _setup_logger(verbose):
-    """Setup the root logger.
+def _setup_logger(logger_name, verbose):
+    """Setup a logger.
+    Args:
+        logger_name: The logger name
+        verbose: Flag to enable/disable debug message
+    """
+    main_logger = logging.getLogger(logger_name)
+    main_logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+
+    format_str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    out_stream = logging.StreamHandler(sys.stdout)
+    out_stream.setLevel(logging.DEBUG)
+    out_stream.setFormatter(logging.Formatter(format_str))
+    # The filter help to select only the messages with level info or bellow to go
+    # to stdout
+    out_stream.addFilter(lambda record: record.levelno <= logging.INFO)
+
+    error_stream = logging.StreamHandler(sys.stderr)
+    error_stream.setLevel(logging.ERROR)
+    error_stream.setFormatter(logging.Formatter(format_str))
+
+    main_logger.addHandler(out_stream)
+    main_logger.addHandler(error_stream)
+
+
+def _setup_loggers(verbose):
+    """Setup the application loggers.
     Args:
         verbose: Flag to enable/disable debug message
     """
-    # src: The python module is the name of the source folder
-    logging.getLogger("src").setLevel(logging.DEBUG if verbose else logging.INFO)
-    logging.getLogger(__name__).setLevel(logging.DEBUG if verbose else logging.INFO)
+    _setup_logger(__name__, verbose)  # __name__: The current module
+    _setup_logger("src", verbose)  # src: The python module is the name of the source folder
 
 
 def _print_header(resource):
@@ -157,7 +180,8 @@ def _crawl_file_list(args):
 def main():
     args = _parse_args()
 
-    _setup_logger(args.verbose)
+    _setup_loggers(args.verbose)
+
     args.func(args)
 
 
