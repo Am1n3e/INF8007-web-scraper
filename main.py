@@ -33,6 +33,7 @@ def _parse_args() -> argparse.Namespace:
         help="Sleep time in secs between each 10 pages (to void rate limiters). only for urls",
         default=0,
     )
+    # arg_parser.set_defaults(func=arg_parser.print_help)
 
     subparsers = arg_parser.add_subparsers(help="Resource type")
 
@@ -56,7 +57,15 @@ def _parse_args() -> argparse.Namespace:
     std_in_parser.add_argument("url_list", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
     std_in_parser.set_defaults(func=_crawl_url_list)
 
-    return arg_parser.parse_args()
+    args = arg_parser.parse_args()
+    if not hasattr(args, "func"):
+        # This is to handle an open bug in the argparse when using subparsers (empty subparser)
+        # when callin "python main.py"
+        # Reference: https://bugs.python.org/issue29298
+        arg_parser.print_help()
+        sys.exit(1)
+
+    return args
 
 
 def _print_dead_links(dead_links: List):
