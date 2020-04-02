@@ -2,7 +2,7 @@
 #
 # Clone and run a node webserver, then run the crawler on it
 
-REQUIRED_APPS=(git npm lsof)
+REQUIRED_APPS=(git npm lsof curl)
 
 #######################################
 # Prints the command line arguments 
@@ -93,10 +93,19 @@ function setup_webserver() {
     export PORT=$2
 
     cd $3 # Changing directory so all the relative paths in the webserver work
-    npm start &  # We hide the output to not mess up the crawler output
+    npm start & # & to start in the back ground 
     cd -
-    echo "Waiting for server to start"
-    sleep 10 # Give the server time to start
+
+    echo "Waiting for server to start ..."
+    # When the curl exit code is 0, that means that server is started
+    # The output of the curl is redirected to /dev/null to not polute the output
+    until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT); do
+        echo '.'
+        sleep 1
+        # This can create an infinite loop if the server is not working
+        # But we assume that server we are using is working 
+        # The user will need to hit CTRL+C to terminate
+    done
 
     echo "**********************************"
 }
