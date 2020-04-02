@@ -1,4 +1,4 @@
-# INF8007-web-scarper
+# INF8007-web-scraper
 
 Web scraper python application for the INF8007 winter 2020.
 
@@ -9,7 +9,7 @@ Web scraper python application for the INF8007 winter 2020.
 
 ## Installation
 
-This code have been tested with `python 3.7`, but should work with any python verion 3.3+
+This code has been tested with `python 3.7`, but should work with any python version 3.3+
 
 1- Create a virtual environment
 ```sh
@@ -17,7 +17,7 @@ python3.7 -m venv env
 source env/bin/activate
 ```
 
-2- Install required libraies
+2- Install required libraries
 
 ```sh
 pip install -r requirements.txt  # or requirement-dev.txt to install dev libraries
@@ -145,7 +145,7 @@ echo https://webscraper.io && echo invalid_url | python main.py  file_list
 ```
 
 #### Trottling
-Some websites use rate limiter which blocks the scrapper, to avoid this use the `--trotlle_duration_sec` arg to sleep after each 10
+Some websites use rate limiter which blocks the scrapper, to avoid this use the `--trotlle_duration_sec` argument to sleep after each 10
 pages
 Note that this argument is only applicable for url and url list
 
@@ -162,7 +162,7 @@ python main.py --disable_crawling url https://webscraper.io
 ```
 
 ### Verbose mode
-To start the app in verbose mode, use the `--verbose` flag. 
+To start the application in verbose mode, use the `--verbose` flag. 
 
 ```sh
 python main.py --verbose url https://webscraper.io 
@@ -211,7 +211,7 @@ http://example.com/page/20                                     Connection error
 ```
 
 About **Connection error**</br>
-A connection error can refere to a reset/refused by peer or timeout connection. To know the exact error, use the `--show_exception_tb` flag.
+A connection error can refer to a reset/refused by peer or timeout connection. To know the exact error, use the `--show_exception_tb` flag.
 
 ### Exit code:
 **0**: Success (but some pages might not been crawled (bad links, rate limiters)</br>
