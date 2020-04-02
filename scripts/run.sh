@@ -27,13 +27,13 @@ function check_requirements() {
     [ -z "$git_found" ] && echo "git ... Not found!" || echo "git ... Found!"
     npm_found=$(which npm)
     [ -z "$npm_found" ] && echo "npm ... Not found!" || echo "npm ... Found!"
-    pkill_found=$(which pkill)
-    [ -z "$pkill_found" ] && echo "pkill ... Not found!" || echo "pkill ... Found!"
+    lsof_found=$(which lsof)
+    [ -z "$lsof_found" ] && echo "lsof ... not found!" || echo "lsof ... found!"
 
     # We chose not block on this since the user can install the packages in the global python
     [ -z "$VIRTUAL_ENV" ] && echo "Python env ... Not enabled!" || echo "Python env ... enabled!"
 
-    if [ -z "$git_found" ] || [ -z "$npm_found" ] || [ -z "$pkill_found" ]; then
+    if [ -z "$git_found" ] || [ -z "$npm_found" ] || [ -z "$lsof_found" ]; then
         echo "Checking requirements ... Fail!"
         exit 1
     else
