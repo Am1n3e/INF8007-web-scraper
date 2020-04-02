@@ -112,7 +112,7 @@ def _print_header(resource):
     print("*" * 100)
 
 
-def _crawl(crawler, args, do_exit=True):
+def _crawl(crawler, args):
     failure_occured = False
     try:
         crawler.crawl()
@@ -127,26 +127,22 @@ def _crawl(crawler, args, do_exit=True):
         if args.show_exception_tb:  # To keep the output clean
             logger.exception(exception)
 
-    exit_code = 1 if failure_occured else 0
-    if do_exit:
-        sys.exit(exit_code)
-    else:
-        return exit_code
+    return 1 if failure_occured else 0
 
 
 def _crawl_url(args):
     crawler = WebCrawler(args.resource, args.show_exception_tb, args.trottle, args.disable_crawling)
-    _crawl(crawler, args)
+    return _crawl(crawler, args)
 
 
 def _crawl_file(args):
     crawler = FileCrawler(args.resource, args.show_exception_tb)
-    _crawl(crawler, args)
+    return _crawl(crawler, args)
 
 
 def _crawl_html(args):
     crawler = HTMLCrawler(args.html_content.read(), args.show_exception_tb)
-    _crawl(crawler, args)
+    return _crawl(crawler, args)
 
 
 def _crawl_resource_list(resource_list, args, create_crawler):
@@ -154,11 +150,11 @@ def _crawl_resource_list(resource_list, args, create_crawler):
     for resource in resource_list:
         _print_header(resource)
         crawler = create_crawler(resource, args)
-        exit_code = _crawl(crawler, args, do_exit=False)
-        if exit_code == 1:
+        exit_code = _crawl(crawler, args)
+        if exit_code == 1 and over_all_exit_code != 1:
             over_all_exit_code = 1
 
-    sys.exit(over_all_exit_code)
+    return over_all_exit_code
 
 
 def _crawl_url_list(args):
@@ -166,7 +162,7 @@ def _crawl_url_list(args):
         return WebCrawler(resource, args.show_exception_tb, args.trottle, args.disable_crawling)
 
     url_list = re.split(r"\s+", args.url_list.read().strip())
-    _crawl_resource_list(url_list, args, create_crawler)
+    return _crawl_resource_list(url_list, args, create_crawler)
 
 
 def _crawl_file_list(args):
@@ -174,7 +170,7 @@ def _crawl_file_list(args):
         return FileCrawler(resource, args.show_exception_tb)
 
     file_list = re.split(r"\s+", args.file_list.read().strip())
-    _crawl_resource_list(file_list, args, create_crawler)
+    return _crawl_resource_list(file_list, args, create_crawler)
 
 
 def main():
@@ -182,7 +178,9 @@ def main():
 
     _setup_loggers(args.verbose)
 
-    args.func(args)
+    exit_code = args.func(args)
+
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
