@@ -16,7 +16,12 @@ class CrawlerException(Exception):
 
 class Crawler(ABC):
     def __init__(
-        self, resource: str, show_exception_tb: bool, disable_crawling: bool, trottle: int, scrapper: Scraper
+        self,
+        resource: str,
+        show_exception_tb: bool,
+        disable_crawling: bool,
+        trottle_duration_sec: int,
+        scrapper: Scraper,
     ) -> None:
         """Init the crawler object.
 
@@ -36,7 +41,7 @@ class Crawler(ABC):
         self._resource = resource  # Act as protected member
 
         # for this var we don't care if the user change it
-        self.trottle = trottle
+        self.trottle_duration_sec = trottle_duration_sec
         self.show_exception_tb = show_exception_tb
         self.disable_crawling = disable_crawling
 
@@ -190,6 +195,6 @@ class Crawler(ABC):
         """Check if a trottle is needed and sleep is yes"""
         self.__crawled_pages_cnt += 1
 
-        if self.trottle > 0 and self.__crawled_pages_cnt % 10 == 0:
-            logger.debug("Sleeping for %d", self.trottle)
-            time.sleep(self.trottle)
+        if self.trottle_duration_sec > 0 and self.__crawled_pages_cnt % 10 == 0:
+            logger.debug("Sleeping for %d", self.trottle_duration_sec)
+            time.sleep(self.trottle_duration_sec)
