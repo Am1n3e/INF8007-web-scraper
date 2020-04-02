@@ -2,6 +2,8 @@
 #
 # Clone and run a node webserver, then run the crawler on it
 
+REQUIRED_APPS=(git npm lsof)
+
 #######################################
 # Print error message with the missing args and exits with 1.
 # Arguments:
@@ -19,21 +21,23 @@ function report_missing_arg() {
 #   None
 #######################################
 function check_requirements() {
-    git_exits=
-    npm_exits=1
     echo ">>> Checking requirements"
 
-    git_found=$(which git)
-    [ -z "$git_found" ] && echo "git ... Not found!" || echo "git ... Found!"
-    npm_found=$(which npm)
-    [ -z "$npm_found" ] && echo "npm ... Not found!" || echo "npm ... Found!"
-    lsof_found=$(which lsof)
-    [ -z "$lsof_found" ] && echo "lsof ... not found!" || echo "lsof ... found!"
+    requirements_ok=1
+    for app in "${REQUIRED_APPS[@]}"; do
+        app_found=$(which $app)
+        if [ -z "$app_found" ]; then 
+            echo "$app ... Not found :("
+            requirements_ok=0
+        else
+            echo "$app ... Found"
+        fi
+    done
 
     # We chose not block on this since the user can install the packages in the global python
     [ -z "$VIRTUAL_ENV" ] && echo "Python env ... Not enabled!" || echo "Python env ... enabled!"
 
-    if [ -z "$git_found" ] || [ -z "$npm_found" ] || [ -z "$lsof_found" ]; then
+    if [[ $requirements_ok -eq 0 ]]; then
         echo "Checking requirements ... Fail!"
         exit 1
     else
