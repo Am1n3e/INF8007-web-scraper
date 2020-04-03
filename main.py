@@ -33,7 +33,6 @@ def _parse_args() -> argparse.Namespace:
         help="Sleep time in secs between each 10 pages (to void rate limiters). only for urls",
         default=0,
     )
-    # arg_parser.set_defaults(func=arg_parser.print_help)
 
     subparsers = arg_parser.add_subparsers(help="Resource type")
 
