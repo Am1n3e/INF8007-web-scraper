@@ -60,6 +60,6 @@ class WebCrawler(Crawler):
             # The request library requires to have http or https.
             # we force http since websites with encryption will do the redirecting
             # Not the other way around.
-            new_url = "http://" + url
+            return "http://" + url
 
-        return new_url
+        return url
