@@ -50,6 +50,10 @@ class Scraper(ABC):
         """
         page_content = cls._get_page_content(resource, show_exception_tb)
 
+        # If the content is not HTML the following regexp will not find the body
+        # We did not check the content of the body since we wanted to get the links even
+        # from a malformated html and validating html is out of this scope
+
         # We choose to use the only since we don't care about programming links (css, schemas, ...)
         match = re.search(r"<body[^\>]*>([\s\S]*)<\/body>", page_content)
         if match is None:
