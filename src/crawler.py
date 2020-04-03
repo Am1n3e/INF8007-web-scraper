@@ -146,6 +146,7 @@ class Crawler(ABC):
         """
         self.__dead_links.append((link, error_status_code))
 
+    # Pure function
     @staticmethod
     def _is_internal_link(link: str, source_link: str) -> bool:
         """Check if link is internal

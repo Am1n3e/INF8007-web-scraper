@@ -15,6 +15,7 @@ class WebCrawler(Crawler):
         webpage_url = WebCrawler._verify_url(webpage_url)
         super().__init__(webpage_url, show_exception_tb, disable_crawling, throttle_duration_sec, WebScrapper)
 
+    # Pure function
     def _get_root_route(self) -> str:
         return "/"
 
@@ -24,10 +25,12 @@ class WebCrawler(Crawler):
             # If the web site is not accessible in the first place there is no need to continue
             raise CrawlerException(f"The source web page link ({self._resource}) is not accessible")
 
+    # Pure function
     def _is_link_to_check(self, full_link):
         # All link can be checked when using an URL
         return True
 
+    # Pure function
     def _create_full_link(self, source_link: str, link: str) -> str:
         if link == "/":
             # root

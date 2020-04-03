@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class HTMLScrapper(Scraper):
+    # Pure function
     @classmethod
     def _get_page_content(cls, resource: str, show_exception_tb: bool) -> str:
         """Get the page content
