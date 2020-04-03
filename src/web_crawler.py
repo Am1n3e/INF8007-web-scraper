@@ -50,12 +50,13 @@ class WebCrawler(Crawler):
 
         return full_link
 
+    # Pure function
     @staticmethod
     def _verify_url(url):
         if not url.startswith("http://") and not url.startswith("https://"):
             # The request library requires to have http or https.
             # we force http since websites with encryption will do the redirecting
             # Not the other way around.
-            url = "http://" + url
+            new_url = "http://" + url
 
-        return url
+        return new_url
