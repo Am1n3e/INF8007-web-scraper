@@ -12,6 +12,7 @@ class WebCrawler(Crawler):
             web_page_url: The web page url to crawl
             show_exception_tb: Enables exception trace back logging
         """
+        webpage_url = WebCrawler._verify_url(webpage_url)
         super().__init__(webpage_url, show_exception_tb, disable_crawling, throttle_duration_sec, WebScrapper)
 
     def _get_root_route(self) -> str:
@@ -48,3 +49,13 @@ class WebCrawler(Crawler):
             full_link = full_link[:-1]
 
         return full_link
+
+    @staticmethod
+    def _verify_url(url):
+        if not url.startswith("http://") and not url.startswith("https://"):
+            # The request library requires to have http or https.
+            # we force http since websites with encryption will do the redirecting
+            # Not the other way around.
+            url = "http://" + url
+
+        return url
