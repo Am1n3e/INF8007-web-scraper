@@ -2,7 +2,6 @@
 
 Web scraper python application for the INF8007 winter 2020.
 
-
 ## Authors
 - Amine El hattami
 - Khizer Uddin
@@ -125,7 +124,7 @@ python main.py  file_list < resources/file_list_1
 cat resources/file_list_2 | python main.py  file_list
 
 # or using a pip from stdout
-echo resources/webscraper.io.html && echo resources/invalid.html| python main.py  file_list 
+(echo resources/webscraper.io.html && echo resources/invalid.html) | python main.py  file_list 
 ```
 
 ### Crawling url list from stdin
@@ -147,7 +146,7 @@ python main.py  url_list < resources/url_list_1
 cat resources/url_list_2 | python main.py  url_list
 
 # or using a pip from stdout
-echo https://webscraper.io && echo invalid_url | python main.py  file_list 
+(echo https://webscraper.io && echo invalid_url) | python main.py  url_list 
 ```
 ### Optional arguments
 #### Throttling
